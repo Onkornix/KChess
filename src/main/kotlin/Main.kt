@@ -1,15 +1,4 @@
 
-
-/*
-create a coordinate map (0,0)..(8,8)
-each piece is a class:
-    contains moves, position, capture conditions?
-
- */
-
-
-
-
 //Pawns
 val pawnJerry    =   Pawn()
 val pawnRick     =   Pawn()
@@ -18,18 +7,46 @@ val pawnSeymour  =   Pawn()
 //Bishops
 val bishopRodger = Bishop()
 
-val board: MutableList<Piece> = mutableListOf(
+val board = mutableListOf(
     pawnJerry,
     pawnRick,
     pawnSeymour,
     bishopRodger
 )
 fun setBoard(){
-    pawnJerry.setPosition(1,2)
-    pawnRick.setPosition(2,2)
-    pawnSeymour.setPosition(3,2)
-    bishopRodger.setPosition(1,1)
+    mutableListOf(1,2).also { pawnJerry.position = it }
+    mutableListOf(2,3).also { pawnRick.position = it}
+    mutableListOf(3,2).also { pawnSeymour.position = it }
+    //bishopRodger.setPosition(1,1)
 }
+
+fun getMovesPawn(piece: Piece){
+    val moves = listOf(
+        if (!piece.firstMoveUsed){
+            listOf(piece.position[0], piece.position[1] +2)
+        }else listOf(piece.position[0], piece.position[1] +1)
+        if (findCapturesPawn(piece)) {
+            listOf(returnCapturesPawn(piece))
+        }
+    )
+    println(moves)
+}
+
+fun findCapturesPawn(Playpiece: Piece): Boolean {
+    var victim = false
+    for (victimPiece in board) {
+        if ((victimPiece.position[0] == (Playpiece.position[0] + 1))
+            && (victimPiece.position[1] == (Playpiece.position[1] + 1))
+        ){
+            victim = true
+        }
+    }
+    return victim
+}
+fun returnCapturesPawn(piece: Piece): List<List<Int>> {
+    return emptyList()
+}
+
 
 fun move(what: String, where: String){
     if (where.length > 3 || where.length < 3){
@@ -51,12 +68,13 @@ fun move(what: String, where: String){
 
 
     for (piece in board){
-        if (piece.type == what){
-            piece.checkIllegal(piece.position, whereInt, board)
+        when (piece.type){
+            "pawn" -> getMovesPawn(piece)
 
-  }
 
+        }
     }
+
 }
 
 

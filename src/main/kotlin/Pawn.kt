@@ -1,4 +1,4 @@
-import board
+import board as board
 
 /*
         can move y+1 unless firstMovedUsed = false, then move y+2,
@@ -8,33 +8,10 @@ import board
 class Pawn : Piece() {
 
     override val type = "pawn"
-    var firstMoveUsed = false
+    override var firstMoveUsed = false
+    override var position: MutableList<Int> = mutableListOf(0,0)
 
-    override val moves: Array<Map<Char, Int>> = arrayOf(
-        if (firstMoveUsed){
-            mapOf('y' to position[1] + 2)
-        }else mapOf('y' to position[1] + 1),
-        //find out where every piece is pleassseee
-
-
-    )
-
-
-
-    override fun setPosition(posx: Int, posy: Int) {
-
-        position = listOf(posx,posy)
-
-
-    }
-    override fun findNearbyPieces(location: List<Int>) {
-
-    }
-    override fun checkIllegal(start: List<Int>, finish: List<Int>, board: List<Piece>): Boolean {
-        println(moves[0])
-
-        return false
-    }
+    //scan arbitrary area for pieces that can be captured or will make move illegal
 
 
 }

@@ -4,13 +4,11 @@ class Bishop : Piece() {
 
     //override var nearbyPieces: List<List<String>> = listOf()
 
-    override fun setPosition(posx: Int, posy: Int) {
-        position = listOf(posx,posy)
-    }
-    override fun findNearbyPieces(location: List<Int>) {
+     fun findNearbyPieces(location: List<Int>): Boolean {
 
+        return false
     }
-    override fun checkIllegal(start: List<Int>, finish: List<Int>, board: List<Piece>): Boolean {
+     fun checkIllegal(start: List<Int>, finish: List<Int>, board: List<Piece>): Boolean {
 
         return false
     }
