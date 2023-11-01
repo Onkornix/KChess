@@ -20,23 +20,29 @@ fun setBoard(){
     //bishopRodger.setPosition(1,1)
 }
 
-fun getMovesPawn(piece: Piece){
-    val moves = listOf(
-        if (!piece.firstMoveUsed){
-            listOf(piece.position[0], piece.position[1] +2)
-        }else listOf(piece.position[0], piece.position[1] +1)
-        if (findCapturesPawn(piece)) {
-            listOf(returnCapturesPawn(piece))
+fun getMovesPawn(piece: Piece): MutableList<List<Int>> {
+    val moves: MutableList<List<Int>> = mutableListOf()
+
+    when {
+        //first move used
+        !piece.firstMoveUsed -> moves.add(listOf(piece.position[0], piece.position[1] +2))
+        piece.firstMoveUsed -> moves.add(listOf(piece.position[0], piece.position[1] +1))
+
+        //piece found within capture positions
+        pieceInCapturePositionPawn(piece) -> {
+            for (capture in returnCapturesPawn(piece)){
+                moves.add(capture)
+            }
         }
-    )
-    println(moves)
+    }
+    return moves
 }
 
-fun findCapturesPawn(Playpiece: Piece): Boolean {
+fun pieceInCapturePositionPawn(playPiece: Piece): Boolean {
     var victim = false
     for (victimPiece in board) {
-        if ((victimPiece.position[0] == (Playpiece.position[0] + 1))
-            && (victimPiece.position[1] == (Playpiece.position[1] + 1))
+        if ((victimPiece.position[0] == (playPiece.position[0] + 1))
+            && (victimPiece.position[1] == (playPiece.position[1] + 1))
         ){
             victim = true
         }
@@ -44,6 +50,15 @@ fun findCapturesPawn(Playpiece: Piece): Boolean {
     return victim
 }
 fun returnCapturesPawn(piece: Piece): List<List<Int>> {
+    val foundPieces: MutableList<Piece> = mutableListOf()
+    for (pieceOnBoard in board){
+        when (pieceOnBoard.position){
+            listOf(piece.position[0] +1, piece.position[1] +1 ) -> foundPieces.add(pieceOnBoard)
+            listOf(piece.position[0] -1, piece.position[1] +1 ) -> foundPieces.add(pieceOnBoard)
+        }
+    }
+
+
     return emptyList()
 }
 
@@ -69,7 +84,14 @@ fun move(what: String, where: String){
 
     for (piece in board){
         when (piece.type){
-            "pawn" -> getMovesPawn(piece)
+            "pawn" -> {
+                //if move is in the list of legal moves:
+                if (whereInt in getMovesPawn(piece)){
+
+                }
+
+
+            }
 
 
         }
