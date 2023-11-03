@@ -13,6 +13,7 @@ val board = mutableListOf(
     pawnSeymour,
     bishopRodger
 )
+
 fun setBoard(){
     mutableListOf(1,1).also { pawnJerry.position = it }
     mutableListOf(2,1).also { pawnRick.position = it}
@@ -40,8 +41,6 @@ fun getMovesPawn(piece: Piece): MutableList<List<Int>> {
                 listOf(piece.position[0] -1, piece.position[1] +1 ) -> foundPieces.add(pieceOnBoard)
             }
         }
-
-
         return foundPieces
     }
     val moves: MutableList<List<Int>> = mutableListOf()
@@ -61,10 +60,24 @@ fun getMovesPawn(piece: Piece): MutableList<List<Int>> {
     }
     return moves
 }
+
 fun getMovesBishop(piece: Piece): MutableList<List<Int>> {
+
+
     println("boshoping omg")
-    return mutableListOf(listOf(1))
+    val moves: MutableList<List<Int>> = mutableListOf()
+
+    //needs visualization i just can't
+    for (x in piece.position[0]..8){
+        for (y in piece.position[1]..8){
+            moves.add(listOf(x,y))
+        }
+    }
+    println(moves)
+    return moves
 }
+
+
 fun move(pieceToMove: String, whereToMove: String){
     if (whereToMove.length > 3 || whereToMove.length < 3){
         return
@@ -79,16 +92,19 @@ fun move(pieceToMove: String, whereToMove: String){
 
 
     for (piece in board){
-        when (pieceToMove) {
-            "pawn" -> {
+
+        when  {
+            (piece.type == pieceToMove && pieceToMove == "pawn") -> {
                 //if move is in the list of legal moves:
                 if (whereInt in getMovesPawn(piece)) {
                     println("can move $pieceToMove to $whereToMove")
                     piece.position = whereInt
                     return
+                }else {
+                    println("cannot move $pieceToMove to $whereToMove: illegal")
                 }
             }
-            "bishop" -> {
+            (piece.type == pieceToMove && pieceToMove == "bishop") -> {
                 if (whereInt in getMovesBishop(piece)) {
 
                 }
@@ -102,8 +118,8 @@ fun move(pieceToMove: String, whereToMove: String){
 
 fun main() {
     setBoard()
-
-    var pieceToMove: String = readln()
-    var whereToMove: String = readln()
-    move(pieceToMove.lowercase(), whereToMove.lowercase())
+    move("bishop", "d_3")
+    //var pieceToMove: String = readln()
+    //var whereToMove: String = readln()
+    //move(pieceToMove.lowercase(), whereToMove.lowercase())
 }
