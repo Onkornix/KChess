@@ -6,12 +6,16 @@ val pawnSeymour  =   Pawn()
 
 //Bishops
 val bishopRodger = Bishop()
+val bishopMiranda = Bishop()
+
 
 val board = mutableListOf(
     pawnJerry,
     pawnRick,
     pawnSeymour,
-    bishopRodger
+
+    bishopRodger,
+    bishopMiranda,
 )
 
 fun setBoard(){
@@ -68,12 +72,15 @@ fun getMovesBishop(piece: Piece): MutableList<List<Int>> {
     val moves: MutableList<List<Int>> = mutableListOf()
 
     //needs visualization i just can't
-    for (x in piece.position[0]..8){
-        for (y in piece.position[1]..8){
-            moves.add(listOf(x,y))
-        }
+    /*
+    (1,1), (2,2), (3,3)
+
+     */
+    for (x in piece.position){
+        moves.add(listOf(piece.position[0]+1,piece.position[1]+1))
     }
-    println(moves)
+
+    //println(moves)
     return moves
 }
 
@@ -93,7 +100,7 @@ fun move(pieceToMove: String, whereToMove: String){
 
     for (piece in board){
 
-        when  {
+        when {
             (piece.type == pieceToMove && pieceToMove == "pawn") -> {
                 //if move is in the list of legal moves:
                 if (whereInt in getMovesPawn(piece)) {
@@ -106,7 +113,8 @@ fun move(pieceToMove: String, whereToMove: String){
             }
             (piece.type == pieceToMove && pieceToMove == "bishop") -> {
                 if (whereInt in getMovesBishop(piece)) {
-
+                    println("can move")
+                    
                 }
             }
         }
@@ -115,11 +123,38 @@ fun move(pieceToMove: String, whereToMove: String){
 
 }
 
+fun printBoard(){
+    val pawnIcon = "P"
+    val bishopIcon = "B"
+    val emptyIcon = "X"
 
+    val xRow: MutableList<String> = mutableListOf()
+    val stack: MutableList<MutableList<String>> = mutableListOf()
+    for (y in 1..8){
+        xRow.clear()
+        for (x in 1..8){
+            for (piece in board){
+                if (piece.position == mutableListOf(x,y)){
+                    when (piece.type){
+                        "pawn" -> xRow.add(pawnIcon)
+                        "bishop" -> xRow.add(bishopIcon)
+                    }
+                    break
+                }
+
+            }// piece
+            xRow.add(emptyIcon)
+        }// x
+
+        stack.add(xRow)
+    }// y
+    println(stack)
+}
 fun main() {
     setBoard()
-    move("bishop", "d_3")
+    //move("bishop", "d_3")
     //var pieceToMove: String = readln()
     //var whereToMove: String = readln()
     //move(pieceToMove.lowercase(), whereToMove.lowercase())
+    printBoard()
 }
