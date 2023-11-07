@@ -1,29 +1,39 @@
+var moves: Int = 0
 
-//Pawns
-val pawnJerry    =   Pawn()
-val pawnRick     =   Pawn()
-val pawnSeymour  =   Pawn()
+val pawnJerry    =   Pawn(1,2)
+val pawnRick     =   Pawn(2,2)
+val pawnSeymour  =   Pawn(3,2)
+val pawnHilary   =   Pawn(4,2)
+val pawnJohan   =   Pawn(5,2)
+val pawnBillie =  Pawn(6,2)
+val pawnSusan =  Pawn(7,2)
+val pawnKelly =  Pawn(8,2)
 
-//Bishops
-val bishopRodger = Bishop()
-val bishopMiranda = Bishop()
-
+val bishopRodger = Bishop(2,1)
+val bishopMiranda = Bishop(7,1)
 
 val board = mutableListOf(
-    pawnJerry,
-    pawnRick,
-    pawnSeymour,
+    pawnJerry, pawnRick, pawnSeymour,
+    pawnHilary, pawnJohan, pawnBillie,
+    pawnSusan, pawnKelly,
 
-    bishopRodger,
-    bishopMiranda,
+    bishopRodger, bishopMiranda,
 )
+val playerOne = Board(1, mutableListOf(
+    pawnJerry, pawnRick, pawnSeymour,
+    pawnHilary, pawnJohan, pawnBillie,
+    pawnSusan, pawnKelly,
+))
+val playerTwo = Board(2, mutableListOf())
 
-fun setBoard(){
-    mutableListOf(1,1).also { pawnJerry.position = it }
-    mutableListOf(2,1).also { pawnRick.position = it}
-    mutableListOf(3,1).also { pawnSeymour.position = it }
+fun whichPlayer(): Board{
+    //find out whose turn
+    return if (moves % 2 != 0){
+        playerOne
+    }else{
+        playerTwo
+    }
 
-    mutableListOf(3,2).also { bishopRodger.position = it}
 }
 
 fun getMovesPawn(piece: Piece): MutableList<List<Int>> {
@@ -48,7 +58,8 @@ fun getMovesPawn(piece: Piece): MutableList<List<Int>> {
         return foundPieces
     }
     val moves: MutableList<List<Int>> = mutableListOf()
-    //check for first move privilages
+
+    //check for first move privileges
     when (piece.firstMoveUsed) {
         false -> {
             moves.add(listOf(piece.position[0], piece.position[1] + 2))
@@ -66,22 +77,7 @@ fun getMovesPawn(piece: Piece): MutableList<List<Int>> {
 }
 
 fun getMovesBishop(piece: Piece): MutableList<List<Int>> {
-
-
-    println("boshoping omg")
-    val moves: MutableList<List<Int>> = mutableListOf()
-
-    //needs visualization i just can't
-    /*
-    (1,1), (2,2), (3,3)
-
-     */
-    for (x in piece.position){
-        moves.add(listOf(piece.position[0]+1,piece.position[1]+1))
-    }
-
-    //println(moves)
-    return moves
+    return mutableListOf()
 }
 
 
@@ -106,6 +102,7 @@ fun move(pieceToMove: String, whereToMove: String){
                 if (whereInt in getMovesPawn(piece)) {
                     println("can move $pieceToMove to $whereToMove")
                     piece.position = whereInt
+                    moves++
                     return
                 }else {
                     println("cannot move $pieceToMove to $whereToMove: illegal")
@@ -124,37 +121,41 @@ fun move(pieceToMove: String, whereToMove: String){
 }
 
 fun printBoard(){
-    val pawnIcon = "P"
+    val red = "\u001b[38;5;197m"
+    val resetColor = "\u001b[0m"
+    val pawnIcon = "${red}P${resetColor}"
     val bishopIcon = "B"
-    val emptyIcon = "X"
+    val emptyIcon = "*"
+
 
     val xRow: MutableList<String> = mutableListOf()
-    val stack: MutableList<MutableList<String>> = mutableListOf()
     for (y in 1..8){
         xRow.clear()
         for (x in 1..8){
+            var hasPiece = false
             for (piece in board){
                 if (piece.position == mutableListOf(x,y)){
                     when (piece.type){
                         "pawn" -> xRow.add(pawnIcon)
                         "bishop" -> xRow.add(bishopIcon)
                     }
+                    hasPiece = true
                     break
                 }
-
-            }// piece
-            xRow.add(emptyIcon)
-        }// x
-
-        stack.add(xRow)
+                // piece
+            }
+            // x
+            if (!hasPiece){
+                xRow.add(emptyIcon)
+            }
+        }
+        println(xRow)
     }// y
-    println(stack)
 }
 fun main() {
-    setBoard()
     //move("bishop", "d_3")
     //var pieceToMove: String = readln()
     //var whereToMove: String = readln()
     //move(pieceToMove.lowercase(), whereToMove.lowercase())
-    printBoard()
+    //printBoard()
 }
