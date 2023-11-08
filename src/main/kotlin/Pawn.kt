@@ -3,7 +3,7 @@
         or a piece is within (x+/-1,y+/-1) then move (x+/-1,y+/-1)
         and capture piece
          */
-class Pawn(startX:Int,startY:Int) : Piece() {
+class Pawn(startX:Int, startY:Int, override val player: Int) : Piece() {
 
     override val type = "pawn"
     override var firstMoveUsed = false

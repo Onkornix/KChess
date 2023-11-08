@@ -1,16 +1,19 @@
 var moves: Int = 0
 
-val pawnJerry    =   Pawn(1,2)
-val pawnRick     =   Pawn(2,2)
-val pawnSeymour  =   Pawn(3,2)
-val pawnHilary   =   Pawn(4,2)
-val pawnJohan   =   Pawn(5,2)
-val pawnBillie =  Pawn(6,2)
-val pawnSusan =  Pawn(7,2)
-val pawnKelly =  Pawn(8,2)
+val pawnJerry    =   Pawn(1,2,1)
+val pawnRick     =   Pawn(2,2,1)
+val pawnSeymour  =   Pawn(3,2,1)
+val pawnHilary   =   Pawn(4,2,1)
+val pawnJohan   =   Pawn(5,2,1)
+val pawnBillie =  Pawn(6,2,1)
+val pawnSusan =  Pawn(7,2,1)
+val pawnKelly =  Pawn(8,2,1)
 
-val bishopRodger = Bishop(2,1)
-val bishopMiranda = Bishop(7,1)
+val bishopRodger = Bishop(2,1,1)
+val bishopMiranda = Bishop(7,1,1)
+
+
+val evilPawnJerry = Pawn(2,3,2)
 
 val board = mutableListOf(
     pawnJerry, pawnRick, pawnSeymour,
@@ -18,13 +21,21 @@ val board = mutableListOf(
     pawnSusan, pawnKelly,
 
     bishopRodger, bishopMiranda,
+
+    evilPawnJerry
+
+
 )
 val playerOne = Board(1, mutableListOf(
     pawnJerry, pawnRick, pawnSeymour,
     pawnHilary, pawnJohan, pawnBillie,
     pawnSusan, pawnKelly,
+
+    bishopRodger, bishopMiranda
 ))
-val playerTwo = Board(2, mutableListOf())
+val playerTwo = Board(2, mutableListOf(
+    evilPawnJerry
+))
 
 fun whichPlayer(): Board{
     //find out whose turn
@@ -33,37 +44,73 @@ fun whichPlayer(): Board{
     }else{
         playerTwo
     }
-
 }
 
 fun getMovesPawn(piece: Piece): MutableList<List<Int>> {
+
+
     fun pieceInCapturePositionPawn(playPiece: Piece): Boolean {
-        for (victimPiece in board) {
-            if ((victimPiece.position[0] == (playPiece.position[0] + 1))
-                && (victimPiece.position[1] == (playPiece.position[1] + 1))
-            ){
-                return true
+        if (whichPlayer().p == 1) {
+            for (victimPiece in board) {
+                if ((victimPiece.position[0] == (playPiece.position[0] + 1))
+                    && (victimPiece.position[1] == (playPiece.position[1] + 1))
+                ) {
+                    return true
+                }
             }
+            return false
+        }else{
+            for (victimPiece in board) {
+                if ((victimPiece.position[0] == (playPiece.position[0] - 1))
+                    && (victimPiece.position[1] == (playPiece.position[1] - 1))
+                ) {
+                    return true
+                }
+            }
+            return false
         }
-        return false
     }
     fun returnCapturesPawn(piece: Piece): MutableList<Piece> {
         val foundPieces: MutableList<Piece> = mutableListOf()
-        for (pieceOnBoard in board){
-            when (pieceOnBoard.position){
-                listOf(piece.position[0] +1, piece.position[1] +1 ) -> foundPieces.add(pieceOnBoard)
-                listOf(piece.position[0] -1, piece.position[1] +1 ) -> foundPieces.add(pieceOnBoard)
+
+        if (whichPlayer().p == 1){
+            for (pieceOnBoard in board){
+                when (pieceOnBoard.position){
+                    listOf(piece.position[0] +1, piece.position[1] +1 ) -> {
+                        if (piece.player == 2) foundPieces.add(pieceOnBoard)
+                    }
+                    listOf(piece.position[0] -1, piece.position[1] +1 ) -> {
+                        if (piece.player == 2) foundPieces.add(pieceOnBoard)
+                    }
+                }
             }
+            return foundPieces
+        }else{
+            for (pieceOnBoard in board){
+                when (pieceOnBoard.position){
+                    listOf(piece.position[0] +1, piece.position[1] -1 ) -> {
+                        if (piece.player == 1) foundPieces.add(pieceOnBoard)
+                    }
+                    listOf(piece.position[0] -1, piece.position[1] -1 ) -> {
+                        if (piece.player == 1) foundPieces.add(pieceOnBoard)
+                    }
+                }
+            }
+            return foundPieces
         }
-        return foundPieces
+
     }
     val moves: MutableList<List<Int>> = mutableListOf()
 
     //check for first move privileges
     when (piece.firstMoveUsed) {
         false -> {
-            moves.add(listOf(piece.position[0], piece.position[1] + 2))
-            piece.firstMoveUsed = true
+            for (p in board){
+                if (p.position != listOf(piece.position[0],piece.position[1]+1)) {
+                    moves.add(listOf(piece.position[0], piece.position[1] + 2))
+                    piece.firstMoveUsed = true
+                }
+            }
         }
         true -> moves.add(listOf(piece.position[0], piece.position[1] + 1)) // is true
     }
@@ -121,17 +168,21 @@ fun move(pieceToMove: String, whereToMove: String){
 }
 
 fun printBoard(){
-    val red = "\u001b[38;5;197m"
+    TODO("return color code depending on player")
+    fun pCol() : String{ //player color
+
+        return ""
+    }
     val resetColor = "\u001b[0m"
-    val pawnIcon = "${red}P${resetColor}"
+    val pawnIcon = "${pCol()}P${resetColor}"
     val bishopIcon = "B"
     val emptyIcon = "*"
 
 
     val xRow: MutableList<String> = mutableListOf()
-    for (y in 1..8){
+    for (y in 8 downTo 1){
         xRow.clear()
-        for (x in 1..8){
+        for (x in 1 .. 8){
             var hasPiece = false
             for (piece in board){
                 if (piece.position == mutableListOf(x,y)){
@@ -157,5 +208,5 @@ fun main() {
     //var pieceToMove: String = readln()
     //var whereToMove: String = readln()
     //move(pieceToMove.lowercase(), whereToMove.lowercase())
-    //printBoard()
+    printBoard()
 }
