@@ -1,44 +1,50 @@
 
+//player 1 pieces (good pieces)
+val pawnJerry = Pawn(1,2,1) ; val pawnRick = Pawn(2,2,1) ; val pawnSeymour = Pawn(3,2,1)
+val pawnHilary = Pawn(4,2,1) ; val pawnJohan = Pawn(5,2,1) ; val pawnBillie = Pawn(6,2,1)
+val pawnSusan =  Pawn(7,2,1) ; val pawnKelly =  Pawn(8,2,1)
+val bishopRodger = Bishop(3,4,1) ; val bishopMiranda = Bishop(7,1,1)
+val kingGeorge = King(4,1,1)
 
-val pawnJerry    =   Pawn(1,2,1)
-val pawnRick     =   Pawn(2,7,1)
-val pawnSeymour  =   Pawn(3,2,1)
-val pawnHilary   =   Pawn(4,2,1)
-val pawnJohan   =   Pawn(5,2,1)
-val pawnBillie =  Pawn(6,2,1)
-val pawnSusan =  Pawn(7,2,1)
-val pawnKelly =  Pawn(8,2,1)
+//player 2 pieces (evil)
+val evilPawnJerry = Pawn(1,7,2) ; val evilPawnRick = Pawn(2, 7, 2) ; val evilPawnSeymour = Pawn(3, 7, 2)
+val evilBishopRodger = Bishop(4,4,2)
 
-val bishopRodger = Bishop(2,1,1)
-val bishopMiranda = Bishop(7,1,1)
-
-
-val evilPawnJerry = Pawn(1,8,2)
-
+//entire bord
 val board = mutableListOf(
-    pawnJerry, pawnRick, pawnSeymour,
-    pawnHilary, pawnJohan, pawnBillie,
+    pawnJerry, pawnRick, pawnSeymour, pawnHilary, pawnJohan, pawnBillie, pawnSusan, pawnKelly,
+
+    bishopRodger, bishopMiranda,
+
+    kingGeorge,
+    // ----class divide---- \\
+
+    evilPawnJerry, evilPawnRick, evilPawnSeymour,
+
+    evilBishopRodger
+
+)
+//player 1 only board
+val playerOne = Board(1, mutableListOf(
+    pawnJerry, pawnRick, pawnSeymour, pawnHilary, pawnJohan, pawnBillie,
     pawnSusan, pawnKelly,
 
     bishopRodger, bishopMiranda,
 
-    evilPawnJerry
-
-
-)
-val playerOne = Board(1, mutableListOf(
-    pawnJerry, pawnRick, pawnSeymour,
-    pawnHilary, pawnJohan, pawnBillie,
-    pawnSusan, pawnKelly,
-
-    bishopRodger, bishopMiranda
+    kingGeorge
 ))
+
+//player 2 only board
 val playerTwo = Board(2, mutableListOf(
-    evilPawnJerry
+    evilPawnJerry, evilPawnRick, evilPawnSeymour,
+
+    evilBishopRodger
 ))
 
+
+//find out whose turn
 fun whichPlayer(): Board{
-    //find out whose turn
+
     return if (moves % 2 == 0){
         playerOne
     }else{
@@ -46,115 +52,9 @@ fun whichPlayer(): Board{
     }
 }
 
-fun getMovesPawn(piece: Piece): MutableList<List<Int>> {
-    println("$piece: ${piece.position}")
-    fun pieceInCapturePositionPawn(playPiece: Piece): Boolean {
-        if (whichPlayer().p == 1) { // is player 1
-            for (victimPiece in playerTwo.b) {
-                if ((victimPiece.position[0] == (playPiece.position[0] + 1))
-                    && (victimPiece.position[1] == (playPiece.position[1] + 1))
-                ) {
-                    return true
-                }
-            }
-            return false
-        }else{ // is player 2
-            for (victimPiece in playerOne.b) {
-                if ((victimPiece.position[0] == (playPiece.position[0] - 1))
-                    && (victimPiece.position[1] == (playPiece.position[1] - 1))
-                ) {
-                    return true
-                }
-            }
-            return false
-        }
-
-    }
-    fun returnCapturesPawn(piece: Piece): MutableList<Piece> {
-        val foundPieces: MutableList<Piece> = mutableListOf()
-
-        if (whichPlayer().p == 1){ //is player 1
-            for (pieceOnBoard in playerTwo.b){ // checking player 2 board
-                when (pieceOnBoard.position){
-                    listOf(piece.position[0] +1, piece.position[1] +1 ) -> {
-                        foundPieces.add(pieceOnBoard)
-                    }
-                    listOf(piece.position[0] -1, piece.position[1] +1 ) -> {
-                        foundPieces.add(pieceOnBoard)
-                    }
-                }
-            }
-            return foundPieces
-        }else{ //is player 2
-            for (pieceOnBoard in playerOne.b){ // checking player 1 board
-                when (pieceOnBoard.position){
-                    listOf(piece.position[0] +1, piece.position[1] -1 ) -> {
-                        if (piece.player == 1) foundPieces.add(pieceOnBoard)
-                    }
-                    listOf(piece.position[0] -1, piece.position[1] -1 ) -> {
-                        if (piece.player == 1) foundPieces.add(pieceOnBoard)
-                    }
-                }
-            }
-            return foundPieces
-        }
-    }
-    val moves: MutableList<List<Int>> = mutableListOf()
-
-    //check for first move privileges
-    if (piece.player == 1) {
-        when (piece.firstMoveUsed) {
-            false -> {
-                var isPieceInFont = false
-                for (pieceCheckInFont in board){ // looking for piece directly in front
-                    if (pieceCheckInFont.position == listOf(piece.position[0],piece.position[1]+1)) {
-                        isPieceInFont = true
-                    }
-                }
-                if (!isPieceInFont) {
-                    moves.add(listOf(piece.position[0], piece.position[1] + 2))
-                    moves.add(listOf(piece.position[0], piece.position[1] + 1))
-                    piece.firstMoveUsed = true
-                }
-            }
-            true -> moves.add(listOf(piece.position[0], piece.position[1] + 1))
-        }
-    }else{
-        when (piece.firstMoveUsed) {
-            false -> {
-                var isPieceInFont = false
-                for (pieceCheckInFont in board){ // looking for piece directly in front
-                    if (pieceCheckInFont.position == listOf(piece.position[0],piece.position[1]-1)) {
-                        isPieceInFont = true
-                    }
-                }
-                if (!isPieceInFont) {
-                    moves.add(listOf(piece.position[0], piece.position[1] - 2))
-                    moves.add(listOf(piece.position[0], piece.position[1] - 1))
-                    piece.firstMoveUsed = true
-                }
-            }
-            true -> moves.add(listOf(piece.position[0], piece.position[1] - 1))
-        }
-    }
-
-
-    //piece found within capture positions
-    if (pieceInCapturePositionPawn(piece)) {
-        for (capture in returnCapturesPawn(piece)) {
-            moves.add(capture.position)
-
-        }
-
-    }
-    println(moves)
-    return moves
+fun checkCheck(){
+    
 }
-
-fun getMovesBishop(piece: Piece): MutableList<List<Int>> {
-    return mutableListOf()
-}
-
 
 fun move(pieceToMove: String, whereToMove: String){
     if (whereToMove.length > 3 || whereToMove.length < 3){
@@ -173,7 +73,7 @@ fun move(pieceToMove: String, whereToMove: String){
         when {
             (piece.type == pieceToMove && pieceToMove == "pawn") -> {
                 //if move is in the list of legal moves:
-                if (whereInt in getMovesPawn(piece)) {
+                if (whereInt in Moves.pawn(piece)) {
                     println("can move $pieceToMove to $whereToMove")
                     piece.position = whereInt
                     moves++
@@ -183,7 +83,7 @@ fun move(pieceToMove: String, whereToMove: String){
                 }
             }
             (piece.type == pieceToMove && pieceToMove == "bishop") -> {
-                if (whereInt in getMovesBishop(piece)) {
+                if (whereInt in Moves.getBishop(piece)) {
                     println("can move")
                     
                 }
@@ -214,6 +114,13 @@ fun printBoard(){
                     "${p2color}B${resetColor}"
                 }
             }
+            "king" -> {
+                return if (piece.player == 1){
+                    "${p1color}K${resetColor}"
+                }else {
+                    "${p2color}K${resetColor}"
+                }
+            }
             else -> return "N"
         }
     }
@@ -227,6 +134,10 @@ fun printBoard(){
                     when (piece.type){
                         "pawn" -> xRow.add(icon(piece,"pawn"))
                         "bishop" -> xRow.add(icon(piece,"bishop"))
+                        "knight" -> xRow.add(icon(piece,"knight"))
+                        "rook" -> xRow.add(icon(piece,"rook"))
+                        "queen" -> xRow.add(icon(piece,"queen"))
+                        "king" -> xRow.add(icon(piece,"king"))
                     }
                     hasPiece = true
                     break
@@ -243,11 +154,10 @@ fun printBoard(){
 }
 
 
-var moves: Int = 1
+var moves: Int = 0
 fun main() {
     printBoard()
-    move("pawn", "b_7")
-    printBoard()
+    //move("bishop", "a_3")
     //var pieceToMove: String = readln()
     //var whereToMove: String = readln()
     //move(pieceToMove.lowercase(), whereToMove.lowercase())
