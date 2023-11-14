@@ -7,7 +7,7 @@ val bishopRodger = Bishop(3,4,1) ; val bishopMiranda = Bishop(7,1,1)
 val kingGeorge = King(4,1,1)
 
 //player 2 pieces (evil)
-val evilPawnJerry = Pawn(1,7,2) ; val evilPawnRick = Pawn(2, 7, 2) ; val evilPawnSeymour = Pawn(3, 7, 2)
+val evilPawnJerry = Pawn(2,3,2) ; val evilPawnRick = Pawn(2, 7, 2) ; val evilPawnSeymour = Pawn(3, 7, 2)
 val evilBishopRodger = Bishop(4,4,2)
 
 //entire bord
@@ -17,6 +17,7 @@ val board = mutableListOf(
     bishopRodger, bishopMiranda,
 
     kingGeorge,
+
     // ----class divide---- \\
 
     evilPawnJerry, evilPawnRick, evilPawnSeymour,
@@ -74,17 +75,17 @@ fun move(pieceToMove: String, whereToMove: String){
             (piece.type == pieceToMove && pieceToMove == "pawn") -> {
                 //if move is in the list of legal moves:
                 if (whereInt in Moves.pawn(piece)) {
-                    println("can move $pieceToMove to $whereToMove")
+                    //println("can move $pieceToMove to $whereToMove")
                     piece.position = whereInt
                     moves++
                     return
                 }else {
-                    println("cannot move $pieceToMove to $whereToMove: illegal")
+                    //println("cannot move $pieceToMove to $whereToMove: illegal")
                 }
             }
             (piece.type == pieceToMove && pieceToMove == "bishop") -> {
                 if (whereInt in Moves.getBishop(piece)) {
-                    println("can move")
+                    //println("can move")
                     
                 }
             }
@@ -95,33 +96,23 @@ fun move(pieceToMove: String, whereToMove: String){
 
 fun printBoard(){
     val resetColor = "\u001b[0m"
-    val p1color = "\u001b[38;5;197m"
-    val p2color = "\u001B[38;5;39m"
     val emptyIcon = "*"
     fun icon(piece: Piece,type: String) : String{ //player color
-        when(type){
-            "pawn" ->{
-                return if (piece.player == 1){
-                    "${p1color}P${resetColor}"
-                }else{
-                    "${p2color}P${resetColor}"
-                }
+        fun pColor(): String {
+            return if (piece.player == 1){
+                "\u001b[38;5;197m"
+            }else{
+                "\u001B[38;5;39m"
             }
-            "bishop" -> {
-                return if (piece.player == 1){
-                    "${p1color}B${resetColor}"
-                }else{
-                    "${p2color}B${resetColor}"
-                }
-            }
-            "king" -> {
-                return if (piece.player == 1){
-                    "${p1color}K${resetColor}"
-                }else {
-                    "${p2color}K${resetColor}"
-                }
-            }
-            else -> return "N"
+        }
+        return when(type){
+            "pawn" -> "${pColor()}P$resetColor"
+            "bishop" -> "${pColor()}B$resetColor"
+            "king" -> "${pColor()}K$resetColor"
+            "queen" -> "${pColor()}Q$resetColor"
+            "rook" -> "${pColor()}R$resetColor"
+            "knight" -> "${pColor()}K$resetColor"
+            else -> "N"
         }
     }
     val xRow: MutableList<String> = mutableListOf()
@@ -157,7 +148,8 @@ fun printBoard(){
 var moves: Int = 0
 fun main() {
     printBoard()
-    //move("bishop", "a_3")
+    move("bishop", "b_3")
+    //printBoard()
     //var pieceToMove: String = readln()
     //var whereToMove: String = readln()
     //move(pieceToMove.lowercase(), whereToMove.lowercase())

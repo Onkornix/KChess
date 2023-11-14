@@ -1,55 +1,61 @@
 object Moves {
     fun pawn(piece: Piece): MutableList<List<Int>> {
         println("$piece: ${piece.position}")
-        fun pieceInCapturePositionPawn(playPiece: Piece): Boolean {
-            if (whichPlayer().p == 1) { // is player 1
-                for (victimPiece in playerTwo.b) {
-                    if ((victimPiece.position[0] == (playPiece.position[0] + 1))
-                        && (victimPiece.position[1] == (playPiece.position[1] + 1))) {
-                        return true
-                    }
-                }
-                return false
-            }else{ // is player 2
-                for (victimPiece in playerOne.b) {
-                    if (victimPiece.position == listOf(playPiece.position[0]+1,playPiece.position[1]-1)
-                        || victimPiece.position == listOf(playPiece.position[0]+1,playPiece.position[1]-1)) {
-                        return true
-                    }
-                }
-                return false
-            }
-        }
-        fun returnCapturesPawn(piece: Piece): MutableList<Piece> {
-            val foundPieces: MutableList<Piece> = mutableListOf()
-
-            if (whichPlayer().p == 1){ //is player 1
-                for (pieceOnBoard in playerTwo.b){ // checking player 2 board
-                    when (pieceOnBoard.position){
-                        listOf(piece.position[0] +1, piece.position[1] +1 ) -> {
-                            foundPieces.add(pieceOnBoard)
-                        }
-                        listOf(piece.position[0] -1, piece.position[1] +1 ) -> {
-                            foundPieces.add(pieceOnBoard)
-                        }
-                    }
-                }
-                return foundPieces
-            }else{ //is player 2
-                for (pieceOnBoard in playerOne.b){ // checking player 1 board
-                    when (pieceOnBoard.position){
-                        listOf(piece.position[0] +1, piece.position[1] -1 ) -> {
-                            foundPieces.add(pieceOnBoard)
-                        }
-                        listOf(piece.position[0] -1, piece.position[1] -1 ) -> {
-                            foundPieces.add(pieceOnBoard)
-                        }
-                    }
-                }
-                return foundPieces
-            }
-        }
         val moves: MutableList<List<Int>> = mutableListOf()
+        fun findCapturesPawn(playPiece: Piece) {
+            var pieceInPosition = false
+            val pp = playPiece.position
+            if (whichPlayer().p == 1) { // is player 1, will search player 2 board
+                for (victimPiece in playerTwo.b) {
+                    if (victimPiece.position == listOf(pp[0]+1,pp[1]+1) // (x+1,y-1)
+                        || victimPiece.position == listOf(pp[0]-1,pp[1]+1)) { // (x-1,y-1)
+                        pieceInPosition = true
+                    }
+                }
+
+            }
+            else{ // is player 2, will search player 1 board
+                for (victimPiece in playerOne.b) {
+                    if (victimPiece.position == listOf(pp[0]+1,pp[1]-1)
+                        || victimPiece.position == listOf(pp[0]-1,pp-1)) {
+                        pieceInPosition = true
+                    }
+                }
+            }
+            if (pieceInPosition){
+                val foundPieces: MutableList<Piece> = mutableListOf()
+
+                if (whichPlayer().p == 1){ //is player 1
+                    for (pieceOnBoard in playerTwo.b){ // checking player 2 board
+                        when (pieceOnBoard.position){
+                            listOf(piece.position[0] +1, piece.position[1] +1 ) -> {
+                                foundPieces.add(pieceOnBoard)
+                            }
+                            listOf(piece.position[0] -1, piece.position[1] +1 ) -> {
+                                foundPieces.add(pieceOnBoard)
+                            }
+                        }
+                    }
+
+                }
+                else{ //is player 2
+                    for (pieceOnBoard in playerOne.b){ // checking player 1 board
+                        when (pieceOnBoard.position){
+                            listOf(piece.position[0] +1, piece.position[1] -1 ) -> {
+                                foundPieces.add(pieceOnBoard)
+                            }
+                            listOf(piece.position[0] -1, piece.position[1] -1 ) -> {
+                                foundPieces.add(pieceOnBoard)
+                            }
+                        }
+                    }
+                }
+                for (p in foundPieces){
+                    moves.add(p.position)
+                }
+            }
+        }
+
 
         //check for first move privileges
         if (piece.player == 1) {
@@ -87,26 +93,28 @@ object Moves {
                 true -> moves.add(listOf(piece.position[0], piece.position[1] - 1))
             }
         }
-
-
-        //piece found within capture positions
-        if (pieceInCapturePositionPawn(piece)) {
-            for (capture in returnCapturesPawn(piece)) {
-                moves.add(capture.position)
-
-            }
-
-        }
+        findCapturesPawn(piece)
         println(moves)
         return moves
     }
     // ----------------------------------------------------------------------------- \\
 
     fun getBishop(piece : Piece) : MutableList<List<Int>> {
-        val moves: MutableList<Int> = mutableListOf()
+        val moves: MutableList<List<Int>> = mutableListOf()
+        val pp = piece.position
 
-
-        return mutableListOf()
+        for ((yOff, x) in (pp[0]..8).withIndex()){
+            if (pp[1]+yOff > 8 || pp[1]-yOff < 1) break
+            moves.add(listOf(x,pp[1]+yOff))
+            moves.add(listOf(x,pp[1]-yOff))
+        }
+        for ((yOff, x) in (pp[0]downTo 1).withIndex()){
+            if (pp[1]+yOff > 8 || pp[1]-yOff < 1) break
+            moves.add(listOf(x,pp[1]+yOff))
+            moves.add(listOf(x,pp[1]-yOff))
+        }
+        println(moves)
+        return moves
     }
 
 }
