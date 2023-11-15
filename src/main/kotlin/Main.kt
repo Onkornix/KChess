@@ -74,7 +74,7 @@ fun move(pieceToMove: String, whereToMove: String){
         when {
             (piece.type == pieceToMove && pieceToMove == "pawn") -> {
                 //if move is in the list of legal moves:
-                if (whereInt in Moves.pawn(piece)) {
+                if (whereInt in piece.moves(piece)) {
                     //println("can move $pieceToMove to $whereToMove")
                     piece.position = whereInt
                     moves++
@@ -84,7 +84,7 @@ fun move(pieceToMove: String, whereToMove: String){
                 }
             }
             (piece.type == pieceToMove && pieceToMove == "bishop") -> {
-                if (whereInt in Moves.getBishop(piece)) {
+                if (whereInt in piece.moves(piece)) {
                     //println("can move")
                     
                 }
@@ -148,7 +148,8 @@ fun printBoard(){
 var moves: Int = 0
 fun main() {
     printBoard()
-    move("bishop", "b_3")
+    move("pawn", "a_3")
+    printBoard()
     //printBoard()
     //var pieceToMove: String = readln()
     //var whereToMove: String = readln()
