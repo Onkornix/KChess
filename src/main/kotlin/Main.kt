@@ -7,11 +7,11 @@ val bishopRodger = Bishop(3,4,1) ; val bishopMiranda = Bishop(7,1,1)
 val kingGeorge = King(4,1,1)
 
 //player 2 pieces (evil)
-val evilPawnJerry = Pawn(2,3,2) ; val evilPawnRick = Pawn(2, 7, 2) ; val evilPawnSeymour = Pawn(3, 7, 2)
+val evilPawnJerry = Pawn(1,3,2) ; val evilPawnRick = Pawn(2, 7, 2) ; val evilPawnSeymour = Pawn(3, 7, 2)
 val evilBishopRodger = Bishop(4,4,2)
 
 //entire bord
-val board = mutableListOf(
+val wholeBoard = Board(0, mutableListOf(
     pawnJerry, pawnRick, pawnSeymour, pawnHilary, pawnJohan, pawnBillie, pawnSusan, pawnKelly,
 
     bishopRodger, bishopMiranda,
@@ -24,7 +24,7 @@ val board = mutableListOf(
 
     evilBishopRodger
 
-)
+))
 //player 1 only board
 val playerOne = Board(1, mutableListOf(
     pawnJerry, pawnRick, pawnSeymour, pawnHilary, pawnJohan, pawnBillie,
@@ -77,7 +77,11 @@ fun move(pieceToMove: String, whereToMove: String){
                 if (whereInt in piece.moves(piece)) {
                     //println("can move $pieceToMove to $whereToMove")
                     piece.position = whereInt
-                    moves++
+                    wholeBoard.update()
+                    playerOne.update()
+                    playerTwo.update()
+                    //moves++
+
                     return
                 }else {
                     //println("cannot move $pieceToMove to $whereToMove: illegal")
@@ -118,9 +122,10 @@ fun printBoard(){
     val xRow: MutableList<String> = mutableListOf()
     for (y in 8 downTo 1){
         xRow.clear()
+        print("$y ")
         for (x in 1 .. 8){
             var hasPiece = false
-            for (piece in board){
+            for (piece in wholeBoard.b){
                 if (piece.position == mutableListOf(x,y)){
                     when (piece.type){
                         "pawn" -> xRow.add(icon(piece,"pawn"))
@@ -140,16 +145,25 @@ fun printBoard(){
                 xRow.add(emptyIcon)
             }
         }
-        println(xRow)
+        println("[${xRow.joinToString("][")}]")
     }// y
+    println("   a  b  c  d  e  f  g  h")
 }
 
 
 var moves: Int = 0
 fun main() {
+    var game = true
     printBoard()
-    move("pawn", "a_3")
-    printBoard()
+    while (game){
+        print("piece: ")
+        val pieceToMove = readln()
+        print("move to: ")
+        val whereToMove = readln()
+        move(pieceToMove, whereToMove)
+        printBoard()
+        game = false
+    }
     //printBoard()
     //var pieceToMove: String = readln()
     //var whereToMove: String = readln()
