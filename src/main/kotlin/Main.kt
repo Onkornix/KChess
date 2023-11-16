@@ -1,3 +1,4 @@
+import java.text.FieldPosition
 
 //player 1 pieces (good pieces)
 val pawnJerry = Pawn(1,2,1) ; val pawnRick = Pawn(2,2,1) ; val pawnSeymour = Pawn(3,2,1)
@@ -51,14 +52,46 @@ fun whichPlayer(): Board{
     }else{
         playerTwo
     }
+
 }
 
 fun checkCheck(){
     
 }
 
+fun checkCapture(piece: Piece, position: List<Int>) {
+    //check enemy player board if two pieces are overlapping, remove enemy piece.
+    when (moves % 2) {
+        0 -> { //player 1 just moved, so check player 2 board
+            if (piece.position in playerTwo.piecePositions){
+                for (checkPiece in playerTwo.b){
+                    if (checkPiece.position == piece.position){
+                        playerTwo.b.remove(checkPiece)
+                        wholeBoard.b.remove(checkPiece)
+                        break
+                    }
+                }
+            }
+        }
+        1 -> {
+            if (piece.position in playerOne.piecePositions) {
+                for (checkPiece in playerOne.b) {
+                    if (checkPiece.position == piece.position) {
+                        playerOne.b.remove(checkPiece)
+                        wholeBoard.b.remove(checkPiece)
+                        break
+                    }
+                }
+            }
+        }
+    }
+    wholeBoard.update()
+    playerOne.update()
+    playerTwo.update()
+}
 fun move(pieceToMove: String, whereToMove: String){
     if (whereToMove.length > 3 || whereToMove.length < 3){
+        println("ERROR: please use proper syntax (example: a 3, a_3, a-3")
         return
     }
     fun whereToInt(where: String): MutableList<Int>{
@@ -69,7 +102,6 @@ fun move(pieceToMove: String, whereToMove: String){
     }
     val whereInt: MutableList<Int> = whereToInt(whereToMove)
 
-    //do whichPayer() and iterate only within their board
     for (piece in whichPlayer().b){
         when {
             (piece.type == pieceToMove && pieceToMove == "pawn") -> {
@@ -80,6 +112,8 @@ fun move(pieceToMove: String, whereToMove: String){
                     wholeBoard.update()
                     playerOne.update()
                     playerTwo.update()
+
+                    checkCapture(piece,whereInt)
                     //moves++
 
                     return

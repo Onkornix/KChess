@@ -10,7 +10,6 @@ class Pawn(startX:Int, startY:Int, override val player: Int) : Piece() {
         val moves: MutableList<List<Int>> = mutableListOf()
         val pp = piece.position // I hate writing piece.position every time
 
-
         /*
         NORMAL MOVES: Y+-1, Y+-2
          */
@@ -41,27 +40,18 @@ class Pawn(startX:Int, startY:Int, override val player: Int) : Piece() {
             }
         }
 
-
         /*
         FINDING PIECE IN CAPTURE POSITION
          */
         var pieceInPosition = false
         when (whichPlayer().p) {
             1 -> {
-                for (victimPiece in playerTwo.b) {
-                    if (victimPiece.position == listOf(pp[0]+1,pp[1]+1) // (x+1,y-1)
-                        || victimPiece.position == listOf(pp[0]-1,pp[1]+1)) { // (x-1,y-1)
-                        pieceInPosition = true
-                    }
-                }
+                if (listOf(pp[0]+1,pp[1]+1) in playerTwo.piecePositions ||
+                    listOf(pp[0]-1,pp[1]+1) in playerTwo.piecePositions) pieceInPosition = true
             }
             2 -> {
-                for (victimPiece in playerOne.b) {
-                    if (victimPiece.position == listOf(pp[0]+1,pp[1]-1)
-                        || victimPiece.position == listOf(pp[0]-1,pp-1)) {
-                        pieceInPosition = true
-                    }
-                }
+                if (listOf(pp[0]+1,pp[1]-1) in playerOne.piecePositions ||
+                    listOf(pp[0]-1,pp[1]-1) in playerOne.piecePositions) pieceInPosition = true
             }
         }
 
@@ -99,7 +89,7 @@ class Pawn(startX:Int, startY:Int, override val player: Int) : Piece() {
             }
         }
 
-        println(moves)
+        //println(moves)
         return moves
     }
 
