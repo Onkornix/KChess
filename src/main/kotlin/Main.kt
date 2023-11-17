@@ -1,7 +1,5 @@
-import java.text.FieldPosition
-
 //player 1 pieces (good pieces)
-val pawnJerry = Pawn(1,2,1) ; val pawnRick = Pawn(2,2,1) ; val pawnSeymour = Pawn(3,2,1)
+val pawnJerry = Pawn(1,2,1); val pawnRick = Pawn(2,2,1) ; val pawnSeymour = Pawn(3,2,1)
 val pawnHilary = Pawn(4,2,1) ; val pawnJohan = Pawn(5,2,1) ; val pawnBillie = Pawn(6,2,1)
 val pawnSusan =  Pawn(7,2,1) ; val pawnKelly =  Pawn(8,2,1)
 val bishopRodger = Bishop(3,4,1) ; val bishopMiranda = Bishop(7,1,1)
@@ -55,8 +53,13 @@ fun whichPlayer(): Board{
 
 }
 
-fun checkCheck(){
-    
+fun checkCheck() {
+    /*
+    player King,
+    search all check positions for enemy pieces in enemy board
+    - if found, break out early to save iterations
+    - return something idk yet
+     */
 }
 
 fun checkCapture(piece: Piece, position: List<Int>) {

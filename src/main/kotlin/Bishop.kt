@@ -9,8 +9,12 @@ class Bishop(startX:Int,startY:Int,override val player:Int) : Piece() {
 
         for ((yOff, x) in (pp[0]..8).withIndex()){
             if (pp[1]+yOff > 8 || pp[1]-yOff < 1) break
-            moves.add(listOf(x,pp[1]+yOff))
-            moves.add(listOf(x,pp[1]-yOff))
+            if (listOf(x,pp[1]+yOff) !in wholeBoard.piecePositions){
+                moves.add(listOf(x,pp[1]+yOff))
+            }
+            if (listOf(x,pp[1]-yOff) !in wholeBoard.piecePositions) {
+                moves.add(listOf(x, pp[1] - yOff))
+            }
         }
         for ((yOff, x) in (pp[0]downTo 1).withIndex()){
             if (pp[1]+yOff > 8 || pp[1]-yOff < 1) break
