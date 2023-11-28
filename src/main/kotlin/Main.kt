@@ -53,16 +53,17 @@ fun whichPlayer(): Board{
 
 }
 
-fun checkCheck() {
+fun checkCheck(): Boolean {
     /*
     player King,
     search all check positions for enemy pieces in enemy board
     - if found, break out early to save iterations
     - return something idk yet
      */
+    return false
 }
 
-fun checkCapture(piece: Piece, position: List<Int>) {
+fun checkCapture(piece: Piece) {
     //check enemy player board if two pieces are overlapping, remove enemy piece.
     when (moves % 2) {
         0 -> { //player 1 just moved, so check player 2 board
@@ -96,6 +97,7 @@ fun move(pieceToMove: String, whereToMove: String){
     if (whereToMove.length > 3 || whereToMove.length < 3){
         println("ERROR: please use proper syntax (example: a 3, a_3, a-3")
         return
+
     }
     fun whereToInt(where: String): MutableList<Int>{
         val letterIntMap = mapOf('a' to 1, 'b' to 2, 'c' to 3, 'd' to 4, 'e' to 5, 'f' to 6, 'g' to 7, 'h' to 8)
@@ -105,34 +107,33 @@ fun move(pieceToMove: String, whereToMove: String){
     }
     val whereInt: MutableList<Int> = whereToInt(whereToMove)
 
+
+    fun checkMove(piece: Piece) {
+        //if move is in the list of legal moves:
+        if (whereInt in piece.moves(piece)) {
+            //println("can move $pieceToMove to $whereToMove")
+            piece.position = whereInt
+            wholeBoard.update()
+            playerOne.update()
+            playerTwo.update()
+
+            checkCapture(piece)
+            //moves++
+
+        }else {
+            //println("cannot move $pieceToMove to $whereToMove: illegal")
+        }
+    }
     for (piece in whichPlayer().b){
         when {
             (piece.type == pieceToMove && pieceToMove == "pawn") -> {
-                //if move is in the list of legal moves:
-                if (whereInt in piece.moves(piece)) {
-                    //println("can move $pieceToMove to $whereToMove")
-                    piece.position = whereInt
-                    wholeBoard.update()
-                    playerOne.update()
-                    playerTwo.update()
-
-                    checkCapture(piece,whereInt)
-                    //moves++
-
-                    return
-                }else {
-                    //println("cannot move $pieceToMove to $whereToMove: illegal")
-                }
+                checkMove(piece)
             }
             (piece.type == pieceToMove && pieceToMove == "bishop") -> {
-                if (whereInt in piece.moves(piece)) {
-                    //println("can move")
-                    
-                }
+                checkMove(piece)
             }
         }
     }
-
 }
 
 fun printBoard(){
@@ -201,9 +202,4 @@ fun main() {
         printBoard()
         game = false
     }
-    //printBoard()
-    //var pieceToMove: String = readln()
-    //var whereToMove: String = readln()
-    //move(pieceToMove.lowercase(), whereToMove.lowercase())
-
 }

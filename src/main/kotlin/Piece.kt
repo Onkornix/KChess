@@ -1,9 +1,7 @@
-import java.beans.Expression
-
 abstract class Piece {
 
     open val player: Int = 1
-    open val type: String = "piece"
+    open val type: String = ""
     open var position: MutableList<Int> = mutableListOf(0,0)
     open var firstMoveUsed: Boolean = false
 
