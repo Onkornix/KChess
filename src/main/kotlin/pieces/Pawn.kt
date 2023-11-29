@@ -1,7 +1,7 @@
 package pieces
 
-import oppositeWhichPlayer
-import whichPlayer
+import getWaitingPlayerBoard
+import getPlayingPlayerBoard
 import wholeBoard
 
 class Pawn(startX:Int, startY:Int, override val player: Int) : Piece() {
@@ -17,22 +17,22 @@ class Pawn(startX:Int, startY:Int, override val player: Int) : Piece() {
         val pp = piece.position // I hate writing piece.position every time
 
         fun returnList(num: Int): List<Int> {
-            return if (whichPlayer().p == 1){
+            return if (getPlayingPlayerBoard().p == 1){
                 listOf(pp[0],pp[1]+num)
             } else {
                 listOf(pp[0],pp[1]-num)
             }
         }
-        fun returnListCaptures(): List<List<Int>> {
-            return if (whichPlayer().p == 1){
+        fun returnListCaptures(): List<MutableList<Int>> {
+            return if (getPlayingPlayerBoard().p == 1){
                 listOf(
-                    listOf(pp[0]+1,pp[1]+1),
-                    listOf(pp[0]-1,pp[1]+1)
+                    mutableListOf(pp[0]+1,pp[1]+1),
+                    mutableListOf(pp[0]-1,pp[1]+1)
                 )
             } else {
                 listOf(
-                    listOf(pp[0]+1,pp[1]-1),
-                    listOf(pp[0]-1,pp[1]-1)
+                    mutableListOf(pp[0]+1,pp[1]-1),
+                    mutableListOf(pp[0]-1,pp[1]-1)
                 )
             }
         }
@@ -49,7 +49,6 @@ class Pawn(startX:Int, startY:Int, override val player: Int) : Piece() {
                         add(returnList(1))
                     }
                 }
-                //piece.firstMoveUsed = false
             }
             true -> {
                 if (returnList(1) !in wholeBoard.piecePositions)
@@ -57,34 +56,21 @@ class Pawn(startX:Int, startY:Int, override val player: Int) : Piece() {
             }
         }
         var pieceInPosition = false
-        var piecePosition: List<Int>
+        var piecePosition: MutableList<Int> = mutableListOf()
         for (list in returnListCaptures()) {
-            if (list in oppositeWhichPlayer().piecePositions) {
+            if (list in getWaitingPlayerBoard().piecePositions) {
                 pieceInPosition = true
+                piecePosition = list
 
-                println("the pawn in which column would you like to capture the piece? (a-h)")
-                val whichColumn: Int = readln().toInt()
+                //println("the pawn in which column would you like to capture the piece? (a-h)")
+                //val whichColumn: Int = readln().toInt()
             }
         }
-        /*if (returnListCaptures() in oppositeWhichPlayer().piecePositions ||
-            returnListCaptures() in oppositeWhichPlayer().piecePositions) pieceInPosition = true
-
-
-         */
         if (pieceInPosition){
-            val foundPieces: MutableList<Piece> = mutableListOf()
-            for (pieceOnBoard in oppositeWhichPlayer().b){ // checking player 2 board
-                when (pieceOnBoard.position){
-                    returnList(1) -> {
-                        foundPieces.add(pieceOnBoard)
-                    }
-                    returnList(1) -> {
-                        foundPieces.add(pieceOnBoard)
-                    }
+            for (pieceOnBoard in getWaitingPlayerBoard().b){ // checking player 2 board
+                if (pieceOnBoard.position == piecePosition) {
+                    moves.add(piecePosition)
                 }
-            }
-            for (p in foundPieces){
-                moves.add(p.position)
             }
         }
         /*

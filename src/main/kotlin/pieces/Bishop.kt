@@ -11,19 +11,19 @@ class Bishop(startX:Int, startY:Int, override val player:Int) : Piece() {
         val moves: MutableList<List<Int>> = mutableListOf()
         val pp = piece.position
 
-        for ((yOffset, x) in (pp[0]..8).withIndex()){
+        for ((yOffset, coordinateX) in (pp[0]..8).withIndex()){
             if (pp[1]+yOffset > 8 || pp[1]-yOffset < 1) break
-            if (listOf(x,pp[1]+yOffset) !in wholeBoard.piecePositions){
-                moves.add(listOf(x,pp[1]+yOffset))
+            if (listOf(coordinateX,pp[1]+yOffset) !in wholeBoard.piecePositions){
+                moves.add(listOf(coordinateX,pp[1]+yOffset))
             }
-            if (listOf(x,pp[1]-yOffset) !in wholeBoard.piecePositions) {
-                moves.add(listOf(x, pp[1] - yOffset))
+            if (listOf(coordinateX,pp[1]-yOffset) !in wholeBoard.piecePositions) {
+                moves.add(listOf(coordinateX, pp[1] - yOffset))
             }
         }
-        for ((yOffset, x) in (pp[0]downTo 1).withIndex()){
+        for ((yOffset, coordinateX) in (pp[0]downTo 1).withIndex()){
             if (pp[1]+yOffset > 8 || pp[1]-yOffset < 1) break
-            moves.add(listOf(x,pp[1]+yOffset))
-            moves.add(listOf(x,pp[1]-yOffset))
+            moves.add(listOf(coordinateX,pp[1]+yOffset))
+            moves.add(listOf(coordinateX,pp[1]-yOffset))
         }
         return moves
     }

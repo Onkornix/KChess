@@ -1,67 +1,7 @@
 import pieces.*
-//player 1 pieces (good pieces)
-val pawnJerry = Pawn(1,2,1); val pawnRick = Pawn(2,2,1) ; val pawnSeymour = Pawn(3,2,1)
-val pawnHilary = Pawn(4,2,1) ; val pawnJohan = Pawn(5,2,1) ; val pawnBillie = Pawn(6,2,1)
-val pawnSusan =  Pawn(7,2,1) ; val pawnKelly =  Pawn(8,2,1)
-val bishopRodger = Bishop(6,4,1) ; val bishopMiranda = Bishop(3,1,1)
-val knightTerry = Knight(2,1,1) ; val knightRodrick = Knight(7,1,1)
-val rookJohn = Rook(1,1,1) ; val rookLeeroy = Rook(8,1,1)
-val kingGeorge = King(4,1,1)
-val queenMarika = Queen(5,1,1)
-
-
-//player 2 pieces (evil)
-val evilPawnJerry = Pawn(1,3,2) ; val evilPawnRick = Pawn(2, 7, 2) ; val evilPawnSeymour = Pawn(3, 7, 2)
-val evilBishopRodger = Bishop(4,4,2)
-
-//entire bord
-val wholeBoard = Board(
-    0, mutableListOf(
-        pawnJerry, pawnRick, pawnSeymour, pawnHilary, pawnJohan, pawnBillie, pawnSusan, pawnKelly,
-
-        bishopRodger, bishopMiranda,
-
-        knightRodrick, knightTerry,
-
-        rookJohn, rookLeeroy,
-
-        kingGeorge, queenMarika,
-
-        // ----class divide---- \\
-
-        evilPawnJerry, evilPawnRick, evilPawnSeymour,
-
-        evilBishopRodger
-
-    )
-)
-//player 1 only board
-val playerOne = Board(
-    1, mutableListOf(
-        pawnJerry, pawnRick, pawnSeymour, pawnHilary, pawnJohan, pawnBillie, pawnSusan, pawnKelly,
-
-        bishopRodger, bishopMiranda,
-
-        knightRodrick, knightTerry,
-
-        rookJohn, rookLeeroy,
-
-        kingGeorge, queenMarika
-    )
-)
-
-//player 2 only board
-val playerTwo = Board(
-    2, mutableListOf(
-        evilPawnJerry, evilPawnRick, evilPawnSeymour,
-
-        evilBishopRodger
-    )
-)
-
 
 //find out whose turn
-fun whichPlayer(): Board {
+fun getPlayingPlayerBoard(): Board {
 
     return if (moves % 2 == 0){
         playerOne
@@ -69,7 +9,7 @@ fun whichPlayer(): Board {
         playerTwo
     }
 }
-fun oppositeWhichPlayer() : Board {
+fun getWaitingPlayerBoard() : Board {
     return if (moves % 2 == 1){
         playerOne
     }else{
@@ -89,25 +29,12 @@ fun checkCheck(): Boolean {
 
 fun checkCapture(piece: Piece) {
     //check enemy player board if two pieces are overlapping, remove enemy piece.
-    if (piece.position in oppositeWhichPlayer().piecePositions){
-        for (checkPiece in oppositeWhichPlayer().b){
+    if (piece.position in getWaitingPlayerBoard().piecePositions){
+        for (checkPiece in getWaitingPlayerBoard().b){
             if (checkPiece.position == piece.position){
-                oppositeWhichPlayer().b.remove(checkPiece)
+                getWaitingPlayerBoard().b.remove(checkPiece)
                 wholeBoard.b.remove(checkPiece)
                 break
-            }
-        }
-    }
-
-
-    fun checkPlayerTwo() {
-        if (piece.position in playerOne.piecePositions) {
-            for (checkPiece in playerOne.b) {
-                if (checkPiece.position == piece.position) {
-                    playerOne.b.remove(checkPiece)
-                    wholeBoard.b.remove(checkPiece)
-                    break
-                }
             }
         }
     }
@@ -115,31 +42,20 @@ fun checkCapture(piece: Piece) {
     playerOne.update()
     playerTwo.update()
 }
-
+fun changeWhereToInteger(where: String): MutableList<Int>{
+    val letterIntMap = mapOf('a' to 1, 'b' to 2, 'c' to 3, 'd' to 4, 'e' to 5, 'f' to 6, 'g' to 7, 'h' to 8)
+    val xpos: Int = letterIntMap[where[0]]!!
+    val ypos: Int = where[2].toString().toInt()
+    return mutableListOf(xpos,ypos)
+}
 fun move(pieceToMove: String, whereToMove: String){
-
-    if (whereToMove.length > 3 || whereToMove.length < 3){
-        println("ERROR: please use proper syntax (example: a 3, a_3, a-3")
-        return
-
-    }
-
-
-    fun whereToInt(where: String): MutableList<Int>{
-        val letterIntMap = mapOf('a' to 1, 'b' to 2, 'c' to 3, 'd' to 4, 'e' to 5, 'f' to 6, 'g' to 7, 'h' to 8)
-        val xpos: Int = letterIntMap[where[0]]!!
-        val ypos: Int = where[2].toString().toInt()
-        return mutableListOf(xpos,ypos)
-    }
-
-
-    val whereInt: MutableList<Int> = whereToInt(whereToMove)
-
-
+    val whereToMoveInteger: MutableList<Int> = changeWhereToInteger(whereToMove)
     fun checkMove(piece: Piece) {
 
-        if (whereInt in piece.moves(piece)) {
-            piece.position = whereInt
+        if (whereToMoveInteger in piece.moves(piece)) {
+            piece.position = whereToMoveInteger
+            piece.firstMoveUsed = true
+
             wholeBoard.update()
             playerOne.update()
             playerTwo.update()
@@ -151,7 +67,14 @@ fun move(pieceToMove: String, whereToMove: String){
             //println("cannot move $pieceToMove to $whereToMove: illegal")
         }
     }
-    for (piece in whichPlayer().b){
+
+    if (whereToMove.length > 3 || whereToMove.length < 3){
+        println("ERROR: please use proper syntax (example: a 3, a_3, a-3")
+        return
+
+    }
+
+    for (piece in getPlayingPlayerBoard().b){
         when {
             (piece.type == pieceToMove && pieceToMove == "pawn") -> {
                 checkMove(piece)
@@ -233,3 +156,64 @@ fun main() {
         game++
     }
 }
+
+
+//player 1 pieces (good pieces)
+val pawnJerry = Pawn(1,2,1); val pawnRick = Pawn(2,2,1) ; val pawnSeymour = Pawn(3,2,1)
+val pawnHilary = Pawn(4,2,1) ; val pawnJohan = Pawn(5,2,1) ; val pawnBillie = Pawn(6,2,1)
+val pawnSusan =  Pawn(7,2,1) ; val pawnKelly =  Pawn(8,2,1)
+val bishopRodger = Bishop(6,4,1) ; val bishopMiranda = Bishop(3,1,1)
+val knightTerry = Knight(2,1,1) ; val knightRodrick = Knight(7,1,1)
+val rookJohn = Rook(1,1,1) ; val rookLeeroy = Rook(8,1,1)
+val kingGeorge = King(4,1,1)
+val queenMarika = Queen(5,1,1)
+
+
+//player 2 pieces (evil)
+val evilPawnJerry = Pawn(1,3,2) ; val evilPawnRick = Pawn(2, 7, 2) ; val evilPawnSeymour = Pawn(3, 7, 2)
+val evilBishopRodger = Bishop(4,4,2)
+
+//entire bord
+val wholeBoard = Board(
+    0, mutableListOf(
+        pawnJerry, pawnRick, pawnSeymour, pawnHilary, pawnJohan, pawnBillie, pawnSusan, pawnKelly,
+
+        bishopRodger, bishopMiranda,
+
+        knightRodrick, knightTerry,
+
+        rookJohn, rookLeeroy,
+
+        kingGeorge, queenMarika,
+
+        // ----class divide---- \\
+
+        evilPawnJerry, evilPawnRick, evilPawnSeymour,
+
+        evilBishopRodger
+
+    )
+)
+//player 1 only board
+val playerOne = Board(
+    1, mutableListOf(
+        pawnJerry, pawnRick, pawnSeymour, pawnHilary, pawnJohan, pawnBillie, pawnSusan, pawnKelly,
+
+        bishopRodger, bishopMiranda,
+
+        knightRodrick, knightTerry,
+
+        rookJohn, rookLeeroy,
+
+        kingGeorge, queenMarika
+    )
+)
+
+//player 2 only board
+val playerTwo = Board(
+    2, mutableListOf(
+        evilPawnJerry, evilPawnRick, evilPawnSeymour,
+
+        evilBishopRodger
+    )
+)
