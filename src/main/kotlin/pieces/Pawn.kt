@@ -1,7 +1,6 @@
 package pieces
 
-import playerOne
-import playerTwo
+import oppositeWhichPlayer
 import whichPlayer
 import wholeBoard
 
@@ -17,99 +16,81 @@ class Pawn(startX:Int, startY:Int, override val player: Int) : Piece() {
         val moves: MutableList<List<Int>> = mutableListOf()
         val pp = piece.position // I hate writing piece.position every time
 
-        // I need to figure out how to make this 1 function for both players
-        fun playerOne() {
-
-            when (piece.firstMoveUsed) {
-                false -> {
-                    moves.run {
-                        if (listOf(pp[0],pp[1]+1) !in wholeBoard.piecePositions
-                            && listOf(pp[0],pp[1]+2) !in wholeBoard.piecePositions) {
-                            add(listOf(pp[0], pp[1] + 2))
-                        }
-                        if (listOf(pp[0],pp[1]+1) !in wholeBoard.piecePositions){
-                            add(listOf(pp[0], pp[1] + 1))
-                        }
-                    }
-                    piece.firstMoveUsed = false
-                }
-                true -> {
-                    if (listOf(pp[0], pp[1] + 1) !in wholeBoard.piecePositions)
-                    moves.add(listOf(pp[0], pp[1] + 1))
-                }
+        fun returnList(num: Int): List<Int> {
+            return if (whichPlayer().p == 1){
+                listOf(pp[0],pp[1]+num)
+            } else {
+                listOf(pp[0],pp[1]-num)
             }
-            var pieceInPosition = false
-            if (listOf(pp[0]+1,pp[1]+1) in playerTwo.piecePositions ||
-                listOf(pp[0]-1,pp[1]+1) in playerTwo.piecePositions) pieceInPosition = true
-
-            if (pieceInPosition){
-                val foundPieces: MutableList<Piece> = mutableListOf()
-                for (pieceOnBoard in playerTwo.b){ // checking player 2 board
-                    when (pieceOnBoard.position){
-                        listOf(pp[0] +1, pp[1] +1 ) -> {
-                            foundPieces.add(pieceOnBoard)
-                        }
-                        listOf(pp[0] -1, pp[1] +1 ) -> {
-                            foundPieces.add(pieceOnBoard)
-                        }
-                    }
-                }
-                for (p in foundPieces){
-                    moves.add(p.position)
-                }
+        }
+        fun returnListCaptures(): List<List<Int>> {
+            return if (whichPlayer().p == 1){
+                listOf(
+                    listOf(pp[0]+1,pp[1]+1),
+                    listOf(pp[0]-1,pp[1]+1)
+                )
+            } else {
+                listOf(
+                    listOf(pp[0]+1,pp[1]-1),
+                    listOf(pp[0]-1,pp[1]-1)
+                )
             }
         }
 
-        fun playerTwo() {
-            when (piece.firstMoveUsed) {
-                false -> {
-                    moves.run {
-                        if (listOf(pp[0],pp[1]-1) !in wholeBoard.piecePositions
-                            && listOf(pp[0],pp[1]-2) !in wholeBoard.piecePositions) {
-                            add(listOf(pp[0], pp[1] - 2))
-                        }
-                        if (listOf(pp[0],pp[1]-1) !in wholeBoard.piecePositions){
-                            add(listOf(pp[0],pp[1]-1))
-                        }
+        // I need to figure out how to make this 1 function for both players
+        when (piece.firstMoveUsed) {
+            false -> {
+                moves.run {
+                    if (returnList(1) !in wholeBoard.piecePositions
+                        && returnList(2) !in wholeBoard.piecePositions) {
+                        add(returnList(2))
                     }
-                    piece.firstMoveUsed = false
+                    if (returnList(1) !in wholeBoard.piecePositions){
+                        add(returnList(1))
+                    }
                 }
-                true -> {
-                    if (listOf(pp[0], pp[1] - 1) !in wholeBoard.piecePositions)
-                        moves.add(listOf(pp[0], pp[1] - 1))
+                //piece.firstMoveUsed = false
+            }
+            true -> {
+                if (returnList(1) !in wholeBoard.piecePositions)
+                moves.add(returnList(1))
+            }
+        }
+        var pieceInPosition = false
+        var piecePosition: List<Int>
+        for (list in returnListCaptures()) {
+            if (list in oppositeWhichPlayer().piecePositions) {
+                pieceInPosition = true
+
+                println("the pawn in which column would you like to capture the piece? (a-h)")
+                val whichColumn: Int = readln().toInt()
+            }
+        }
+        /*if (returnListCaptures() in oppositeWhichPlayer().piecePositions ||
+            returnListCaptures() in oppositeWhichPlayer().piecePositions) pieceInPosition = true
+
+
+         */
+        if (pieceInPosition){
+            val foundPieces: MutableList<Piece> = mutableListOf()
+            for (pieceOnBoard in oppositeWhichPlayer().b){ // checking player 2 board
+                when (pieceOnBoard.position){
+                    returnList(1) -> {
+                        foundPieces.add(pieceOnBoard)
+                    }
+                    returnList(1) -> {
+                        foundPieces.add(pieceOnBoard)
+                    }
                 }
             }
-
-            var pieceInPosition = false
-            if (listOf(pp[0]+1,pp[1]-1) in playerOne.piecePositions ||
-                listOf(pp[0]-1,pp[1]-1) in playerOne.piecePositions) pieceInPosition = true
-
-            if (pieceInPosition) {
-                val foundPieces: MutableList<Piece> = mutableListOf()
-                for (pieceOnBoard in playerOne.b) { // checking player 1 board
-                    when (pieceOnBoard.position) {
-                        listOf(pp[0] + 1, pp[1] - 1) -> {
-                            foundPieces.add(pieceOnBoard)
-                        }
-
-                        listOf(pp[0] - 1, pp[1] - 1) -> {
-                            foundPieces.add(pieceOnBoard)
-                        }
-                    }
-                }
-                for (p in foundPieces) {
-                    moves.add(p.position)
-                }
+            for (p in foundPieces){
+                moves.add(p.position)
             }
         }
         /*
         NORMAL MOVES: Y+-1, Y+-2
          */
-        if (whichPlayer().p == 1){
-            playerOne()
-        }else{
-            playerTwo()
-        }
+        println(moves)
         return moves
     }
 

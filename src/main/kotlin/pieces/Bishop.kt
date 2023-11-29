@@ -11,21 +11,20 @@ class Bishop(startX:Int, startY:Int, override val player:Int) : Piece() {
         val moves: MutableList<List<Int>> = mutableListOf()
         val pp = piece.position
 
-        for ((yOff, x) in (pp[0]..8).withIndex()){
-            if (pp[1]+yOff > 8 || pp[1]-yOff < 1) break
-            if (listOf(x,pp[1]+yOff) !in wholeBoard.piecePositions){
-                moves.add(listOf(x,pp[1]+yOff))
+        for ((yOffset, x) in (pp[0]..8).withIndex()){
+            if (pp[1]+yOffset > 8 || pp[1]-yOffset < 1) break
+            if (listOf(x,pp[1]+yOffset) !in wholeBoard.piecePositions){
+                moves.add(listOf(x,pp[1]+yOffset))
             }
-            if (listOf(x,pp[1]-yOff) !in wholeBoard.piecePositions) {
-                moves.add(listOf(x, pp[1] - yOff))
+            if (listOf(x,pp[1]-yOffset) !in wholeBoard.piecePositions) {
+                moves.add(listOf(x, pp[1] - yOffset))
             }
         }
-        for ((yOff, x) in (pp[0]downTo 1).withIndex()){
-            if (pp[1]+yOff > 8 || pp[1]-yOff < 1) break
-            moves.add(listOf(x,pp[1]+yOff))
-            moves.add(listOf(x,pp[1]-yOff))
+        for ((yOffset, x) in (pp[0]downTo 1).withIndex()){
+            if (pp[1]+yOffset > 8 || pp[1]-yOffset < 1) break
+            moves.add(listOf(x,pp[1]+yOffset))
+            moves.add(listOf(x,pp[1]-yOffset))
         }
-        println(moves)
         return moves
     }
 

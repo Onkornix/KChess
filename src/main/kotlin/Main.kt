@@ -3,7 +3,7 @@ import pieces.*
 val pawnJerry = Pawn(1,2,1); val pawnRick = Pawn(2,2,1) ; val pawnSeymour = Pawn(3,2,1)
 val pawnHilary = Pawn(4,2,1) ; val pawnJohan = Pawn(5,2,1) ; val pawnBillie = Pawn(6,2,1)
 val pawnSusan =  Pawn(7,2,1) ; val pawnKelly =  Pawn(8,2,1)
-val bishopRodger = Bishop(6,1,1) ; val bishopMiranda = Bishop(3,1,1)
+val bishopRodger = Bishop(6,4,1) ; val bishopMiranda = Bishop(3,1,1)
 val knightTerry = Knight(2,1,1) ; val knightRodrick = Knight(7,1,1)
 val rookJohn = Rook(1,1,1) ; val rookLeeroy = Rook(8,1,1)
 val kingGeorge = King(4,1,1)
@@ -68,7 +68,13 @@ fun whichPlayer(): Board {
     }else{
         playerTwo
     }
-
+}
+fun oppositeWhichPlayer() : Board {
+    return if (moves % 2 == 1){
+        playerOne
+    }else{
+        playerTwo
+    }
 }
 
 fun checkCheck(): Boolean {
@@ -83,17 +89,16 @@ fun checkCheck(): Boolean {
 
 fun checkCapture(piece: Piece) {
     //check enemy player board if two pieces are overlapping, remove enemy piece.
-    fun checkPlayerOne() {
-        if (piece.position in playerTwo.piecePositions){
-            for (checkPiece in playerTwo.b){
-                if (checkPiece.position == piece.position){
-                    playerTwo.b.remove(checkPiece)
-                    wholeBoard.b.remove(checkPiece)
-                    break
-                }
+    if (piece.position in oppositeWhichPlayer().piecePositions){
+        for (checkPiece in oppositeWhichPlayer().b){
+            if (checkPiece.position == piece.position){
+                oppositeWhichPlayer().b.remove(checkPiece)
+                wholeBoard.b.remove(checkPiece)
+                break
             }
         }
     }
+
 
     fun checkPlayerTwo() {
         if (piece.position in playerOne.piecePositions) {
@@ -105,11 +110,6 @@ fun checkCapture(piece: Piece) {
                 }
             }
         }
-    }
-    if (whichPlayer().p == 1) {
-        checkPlayerOne()
-    }else{
-        checkPlayerTwo()
     }
     wholeBoard.update()
     playerOne.update()
@@ -221,15 +221,15 @@ fun main() {
 
 
 
-    var game = true
+    var game = 0
     printBoard()
-    while (game){
+    while (game < 2){
         print("piece: ")
         val pieceToMove = readln()
         print("move to: ")
         val whereToMove = readln()
         move(pieceToMove, whereToMove)
         printBoard()
-        game = false
+        game++
     }
 }
