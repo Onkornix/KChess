@@ -51,7 +51,23 @@ fun changeWhereToInteger(where: String): MutableList<Int>{
 fun move(pieceToMove: String, whereToMove: String){
     val whereToMoveInteger: MutableList<Int> = changeWhereToInteger(whereToMove)
     fun checkMove(piece: Piece) {
+        val piecesCanMove: MutableList<Piece> = mutableListOf()
 
+        for (playerPiece in getPlayingPlayerBoard().b) {
+            if (playerPiece.type != pieceToMove) break
+            if (whereToMoveInteger in playerPiece.moves(piece)) {
+                piecesCanMove.add(playerPiece)
+            }
+        }
+
+        if (piecesCanMove.size > 1) {
+            println("More than 1 ${piece.type} can move there. \n Which one should move?")
+            for ((iterator,p) in piecesCanMove.withIndex()) {
+                println("[$iterator] : ${p.type} at ${p.position}")
+            }
+
+        }
+/*
         if (whereToMoveInteger in piece.moves(piece)) {
             piece.position = whereToMoveInteger
             piece.firstMoveUsed = true
@@ -63,9 +79,12 @@ fun move(pieceToMove: String, whereToMove: String){
             checkCapture(piece)
             //moves++
 
+
+
         }else {
             //println("cannot move $pieceToMove to $whereToMove: illegal")
         }
+        */
     }
 
     if (whereToMove.length > 3 || whereToMove.length < 3){
@@ -170,7 +189,7 @@ val queenMarika = Queen(5,1,1)
 
 
 //player 2 pieces (evil)
-val evilPawnJerry = Pawn(1,3,2) ; val evilPawnRick = Pawn(2, 7, 2) ; val evilPawnSeymour = Pawn(3, 7, 2)
+val evilPawnJerry = Pawn(2,3,2) ; val evilPawnRick = Pawn(2, 7, 2) ; val evilPawnSeymour = Pawn(3, 7, 2)
 val evilBishopRodger = Bishop(4,4,2)
 
 //entire bord
