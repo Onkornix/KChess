@@ -27,82 +27,68 @@ fun checkCheck(): Boolean {
     return false
 }
 
-fun checkCapture(piece: Piece) {
-    //check enemy player board if two pieces are overlapping, remove enemy piece.
-    if (piece.position in getWaitingPlayerBoard().piecePositions){
-        for (checkPiece in getWaitingPlayerBoard().b){
-            if (checkPiece.position == piece.position){
-                getWaitingPlayerBoard().b.remove(checkPiece)
-                wholeBoard.b.remove(checkPiece)
-                break
-            }
-        }
-    }
-    wholeBoard.update()
-    playerOne.update()
-    playerTwo.update()
-}
-fun changeWhereToInteger(where: String): MutableList<Int>{
+fun changeWhereToInteger(where: String): List<Int>{
     val letterIntMap = mapOf('a' to 1, 'b' to 2, 'c' to 3, 'd' to 4, 'e' to 5, 'f' to 6, 'g' to 7, 'h' to 8)
     val xpos: Int = letterIntMap[where[0]]!!
     val ypos: Int = where[2].toString().toInt()
-    return mutableListOf(xpos,ypos)
+    return listOf(xpos,ypos)
 }
-fun move(pieceToMove: String, whereToMove: String){
-    val whereToMoveInteger: MutableList<Int> = changeWhereToInteger(whereToMove)
-    fun checkMove(piece: Piece) {
-        val piecesCanMove: MutableList<Piece> = mutableListOf()
+fun checkMove(piece: Piece, whereToMoveInteger: List<Int>, pieceToMove: String): Boolean {
+    val piecesCanMove: MutableList<Piece> = mutableListOf()
+    // This is embarrassing
+    val moveMutableList: MutableList<Int> = mutableListOf(whereToMoveInteger[0],whereToMoveInteger[1])
 
-        for (playerPiece in getPlayingPlayerBoard().b) {
-            if (playerPiece.type != pieceToMove) break
-            if (whereToMoveInteger in playerPiece.moves(piece)) {
-                piecesCanMove.add(playerPiece)
-            }
+    //check if multiple pieces can move to the same place
+    for (playerPiece in getPlayingPlayerBoard().b) {
+        if (playerPiece.type != pieceToMove) break
+        val pieceMoves = playerPiece.moves(playerPiece)
+        if (pieceMoves.contains(whereToMoveInteger)) piecesCanMove.add(playerPiece)
+    }
+
+    if (piecesCanMove.size > 1) {
+        println("More than 1 ${piece.type} can move there. \n" +
+                "Which one should move?")
+        for ((iterator,p) in piecesCanMove.withIndex()) {
+            println("[${iterator+1}] : ${p.type} at ${p.position}")
         }
 
-        if (piecesCanMove.size > 1) {
-            println("More than 1 ${piece.type} can move there. \n Which one should move?")
-            for ((iterator,p) in piecesCanMove.withIndex()) {
-                println("[$iterator] : ${p.type} at ${p.position}")
-            }
+        piecesCanMove[readln().toInt() - 1].position = moveMutableList
+        return true
+    }
 
-        }
-/*
-        if (whereToMoveInteger in piece.moves(piece)) {
-            piece.position = whereToMoveInteger
-            piece.firstMoveUsed = true
+    if (piece.moves(piece).contains(whereToMoveInteger)) {
+        piece.position = moveMutableList
+        return true
+    }
 
-            wholeBoard.update()
-            playerOne.update()
-            playerTwo.update()
-
-            checkCapture(piece)
-            //moves++
+    return false
 
 
 
-        }else {
-            //println("cannot move $pieceToMove to $whereToMove: illegal")
-        }
-        */
+}
+fun move(pieceToMove: String, whereToMove: String): Boolean{
+    val whereToMoveInteger: List<Int> = changeWhereToInteger(whereToMove)
+
+    if (!listOf("pawn","bishop","rook","knight","king","queen").contains(pieceToMove.lowercase())) {
+        println("$pieceToMove is not a valid piece. check spelling, remove whitespaces, and try again")
+        return false
     }
 
     if (whereToMove.length > 3 || whereToMove.length < 3){
         println("ERROR: please use proper syntax (example: a 3, a_3, a-3")
-        return
+        return false
 
     }
 
     for (piece in getPlayingPlayerBoard().b){
-        when {
-            (piece.type == pieceToMove && pieceToMove == "pawn") -> {
-                checkMove(piece)
-            }
-            (piece.type == pieceToMove && pieceToMove == "bishop") -> {
-                checkMove(piece)
+        if (piece.type == pieceToMove) {
+            if (checkMove(piece,whereToMoveInteger,pieceToMove)) {
+                return true
             }
         }
     }
+    println("cannot move $pieceToMove to $whereToMove")
+    return false
 }
 
 fun printBoard(){
@@ -170,7 +156,11 @@ fun main() {
         val pieceToMove = readln()
         print("move to: ")
         val whereToMove = readln()
-        move(pieceToMove, whereToMove)
+        if (!move(pieceToMove, whereToMove)){
+            //println("failed to move piece")
+            continue
+        }
+
         printBoard()
         game++
     }
