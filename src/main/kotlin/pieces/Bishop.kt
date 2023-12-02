@@ -1,6 +1,7 @@
 package pieces
 
-import wholeBoard
+
+import getPlayingPlayerBoard
 
 class Bishop(startX:Int, startY:Int, override val player:Int) : Piece() {
     override val type = "bishop"
@@ -12,18 +13,22 @@ class Bishop(startX:Int, startY:Int, override val player:Int) : Piece() {
         val pp = piece.position
 
         for ((yOffset, coordinateX) in (pp[0]..8).withIndex()){
-            if (pp[1]+yOffset > 8 || pp[1]-yOffset < 1) break
-            if (listOf(coordinateX,pp[1]+yOffset) !in wholeBoard.piecePositions){
+
+            if (listOf(coordinateX,pp[1]+yOffset) !in getPlayingPlayerBoard().piecePositions){
                 moves.add(listOf(coordinateX,pp[1]+yOffset))
             }
-            if (listOf(coordinateX,pp[1]-yOffset) !in wholeBoard.piecePositions) {
+            if (listOf(coordinateX,pp[1]-yOffset) !in getPlayingPlayerBoard().piecePositions) {
                 moves.add(listOf(coordinateX, pp[1] - yOffset))
             }
         }
         for ((yOffset, coordinateX) in (pp[0]downTo 1).withIndex()){
-            if (pp[1]+yOffset > 8 || pp[1]-yOffset < 1) break
-            moves.add(listOf(coordinateX,pp[1]+yOffset))
-            moves.add(listOf(coordinateX,pp[1]-yOffset))
+
+            if (listOf(coordinateX,pp[1]+yOffset) !in getPlayingPlayerBoard().piecePositions){
+                moves.add(listOf(coordinateX,pp[1]+yOffset))
+            }
+            if (listOf(coordinateX,pp[1]-yOffset) !in getPlayingPlayerBoard().piecePositions) {
+                moves.add(listOf(coordinateX, pp[1] - yOffset))
+            }
         }
         return moves
     }

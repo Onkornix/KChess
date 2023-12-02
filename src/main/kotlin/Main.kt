@@ -24,19 +24,16 @@ fun checkCheck(): Boolean {
     - if found, break out early to save iterations
     - return something idk yet
      */
+
+
     return false
 }
-
-fun changeWhereToInteger(where: String): List<Int>{
-    val letterIntMap = mapOf('a' to 1, 'b' to 2, 'c' to 3, 'd' to 4, 'e' to 5, 'f' to 6, 'g' to 7, 'h' to 8)
-    val xpos: Int = letterIntMap[where[0]]!!
-    val ypos: Int = where[2].toString().toInt()
-    return listOf(xpos,ypos)
-}
 fun checkMove(piece: Piece, whereToMoveInteger: List<Int>, pieceToMove: String): Boolean {
+
     val piecesCanMove: MutableList<Piece> = mutableListOf()
     // This is embarrassing
     val moveMutableList: MutableList<Int> = mutableListOf(whereToMoveInteger[0],whereToMoveInteger[1])
+
 
     //check if multiple pieces can move to the same place
     for (playerPiece in getPlayingPlayerBoard().b) {
@@ -67,23 +64,44 @@ fun checkMove(piece: Piece, whereToMoveInteger: List<Int>, pieceToMove: String):
 
 }
 fun move(pieceToMove: String, whereToMove: String): Boolean{
-    val whereToMoveInteger: List<Int> = changeWhereToInteger(whereToMove)
+
+    if (whereToMove.length > 3 || whereToMove.length < 3){
+        println("ERROR: incorrect move syntax (example: a 3, a_3, a-3)")
+        return false
+
+    }
+    when {
+        whereToMove[0] !in ('a'..'h') -> {
+            println("ERROR: x coord not in scope (a..h)")
+            return false
+        }
+        whereToMove[1].toString().toInt() > 8 || whereToMove[1].toString().toInt() < 1 -> {
+            println("ERROR: y coord out of scope. (1..8)")
+            return false
+        }
+    }
+
+    val letterIntMap = mapOf('a' to 1, 'b' to 2, 'c' to 3, 'd' to 4, 'e' to 5, 'f' to 6, 'g' to 7, 'h' to 8)
+    val xpos: Int = letterIntMap[whereToMove[0]]!!
+    val ypos: Int = whereToMove[2].toString().toInt()
+
+    val whereToMoveInteger: List<Int> = listOf(xpos,ypos)
 
     if (!listOf("pawn","bishop","rook","knight","king","queen").contains(pieceToMove.lowercase())) {
         println("$pieceToMove is not a valid piece. check spelling, remove whitespaces, and try again")
         return false
     }
 
-    if (whereToMove.length > 3 || whereToMove.length < 3){
-        println("ERROR: please use proper syntax (example: a 3, a_3, a-3")
-        return false
 
-    }
 
     for (piece in getPlayingPlayerBoard().b){
         if (piece.type == pieceToMove) {
             if (checkMove(piece,whereToMoveInteger,pieceToMove)) {
+                wholeBoard.update()
+                playerTwo.update()
+                playerOne.update()
                 return true
+
             }
         }
     }
@@ -113,6 +131,7 @@ fun printBoard(){
         }
     }
     val xRow: MutableList<String> = mutableListOf()
+    println("   a  b  c  d  e  f  g  h")
     for (y in 8 downTo 1){
         xRow.clear()
         print("$y ")
@@ -138,7 +157,7 @@ fun printBoard(){
                 xRow.add(emptyIcon)
             }
         }
-        println("[${xRow.joinToString("][")}]")
+        println("[${xRow.joinToString("][")}] $y")
     }// y
     println("   a  b  c  d  e  f  g  h")
 }
@@ -146,7 +165,6 @@ fun printBoard(){
 
 var moves: Int = 0
 fun main() {
-
 
 
     var game = 0
@@ -169,17 +187,17 @@ fun main() {
 
 //player 1 pieces (good pieces)
 val pawnJerry = Pawn(1,2,1); val pawnRick = Pawn(2,2,1) ; val pawnSeymour = Pawn(3,2,1)
-val pawnHilary = Pawn(4,2,1) ; val pawnJohan = Pawn(5,2,1) ; val pawnBillie = Pawn(6,2,1)
+val pawnHilary = Pawn(4,2,1) ; val pawnJohan = Pawn(5,5,1) ; val pawnBillie = Pawn(6,2,1)
 val pawnSusan =  Pawn(7,2,1) ; val pawnKelly =  Pawn(8,2,1)
-val bishopRodger = Bishop(6,4,1) ; val bishopMiranda = Bishop(3,1,1)
+val bishopRodger = Bishop(5,7,1) ; val bishopMiranda = Bishop(3,1,1)
 val knightTerry = Knight(2,1,1) ; val knightRodrick = Knight(7,1,1)
 val rookJohn = Rook(1,1,1) ; val rookLeeroy = Rook(8,1,1)
-val kingGeorge = King(4,1,1)
+val kingGeorge = King(4,5,1)
 val queenMarika = Queen(5,1,1)
 
 
 //player 2 pieces (evil)
-val evilPawnJerry = Pawn(2,3,2) ; val evilPawnRick = Pawn(2, 7, 2) ; val evilPawnSeymour = Pawn(3, 7, 2)
+val evilPawnJerry = Pawn(2,7,2) ; val evilPawnRick = Pawn(2, 7, 2) ; val evilPawnSeymour = Pawn(3, 7, 2)
 val evilBishopRodger = Bishop(4,4,2)
 
 //entire bord
