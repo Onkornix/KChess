@@ -17,17 +17,7 @@ fun getWaitingPlayerBoard() : Board {
     }
 }
 
-fun checkCheck(): Boolean {
-    /*
-    player pieces.King,
-    search all check positions for enemy pieces in enemy board
-    - if found, break out early to save iterations
-    - return something idk yet
-     */
 
-
-    return false
-}
 fun checkMove(piece: Piece, whereToMoveInteger: List<Int>, pieceToMove: String): Boolean {
 
     val piecesCanMove: MutableList<Piece> = mutableListOf()
@@ -75,7 +65,7 @@ fun move(pieceToMove: String, whereToMove: String): Boolean{
             println("ERROR: x coord not in scope (a..h)")
             return false
         }
-        whereToMove[1].toString().toInt() > 8 || whereToMove[1].toString().toInt() < 1 -> {
+        whereToMove[2].toString().toInt() > 8 || whereToMove[2].toString().toInt() < 1 -> {
             println("ERROR: y coord out of scope. (1..8)")
             return false
         }
