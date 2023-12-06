@@ -8,9 +8,9 @@ class Bishop(startX:Int, startY:Int, override val player:Int) : Piece() {
     override var position: MutableList<Int> = mutableListOf(startX,startY)
 
 
-    override fun moves(piece: Piece): MutableList<List<Int>> {
+    override fun moves(): MutableList<List<Int>> {
         val moves: MutableList<List<Int>> = mutableListOf()
-        val pp = piece.position
+        val pp = this.position
 
         for ((yOffset, coordinateX) in (pp[0]..8).withIndex()){
 

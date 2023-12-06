@@ -24,11 +24,21 @@ fun checkMove(piece: Piece, whereToMoveInteger: List<Int>, pieceToMove: String):
     // This is embarrassing
     val moveMutableList: MutableList<Int> = mutableListOf(whereToMoveInteger[0],whereToMoveInteger[1])
 
+    if (piece.type != "king") {
+        for (p in getPlayingPlayerBoard().b) {
+            if (p.type == "king") {
+                if (p.checkCheck()) {
+                    println("whoops! you're in check, buckaroo")
+                    return false
+                }
+            }
+        }
+    }
 
     //check if multiple pieces can move to the same place
     for (playerPiece in getPlayingPlayerBoard().b) {
         if (playerPiece.type != pieceToMove) break
-        val pieceMoves = playerPiece.moves(playerPiece)
+        val pieceMoves = playerPiece.moves()
         if (pieceMoves.contains(whereToMoveInteger)) piecesCanMove.add(playerPiece)
     }
 
@@ -43,24 +53,20 @@ fun checkMove(piece: Piece, whereToMoveInteger: List<Int>, pieceToMove: String):
         return true
     }
 
-    if (piece.moves(piece).contains(whereToMoveInteger)) {
+    if (piece.moves().contains(whereToMoveInteger)) {
         piece.position = moveMutableList
         return true
     }
 
     return false
-
-
-
 }
 fun move(pieceToMove: String, whereToMove: String): Boolean{
 
-    if (whereToMove.length > 3 || whereToMove.length < 3){
+    when {
+        whereToMove.length > 3 || whereToMove.length < 3 -> {
         println("ERROR: incorrect move syntax (example: a 3, a_3, a-3)")
         return false
-
-    }
-    when {
+        }
         whereToMove[0] !in ('a'..'h') -> {
             println("ERROR: x coord not in scope (a..h)")
             return false
@@ -156,7 +162,6 @@ fun printBoard(){
 var moves: Int = 0
 fun main() {
 
-
     var game = 0
     printBoard()
     while (game < 2){
@@ -182,7 +187,7 @@ val pawnSusan =  Pawn(7,2,1) ; val pawnKelly =  Pawn(8,2,1)
 val bishopRodger = Bishop(5,7,1) ; val bishopMiranda = Bishop(3,1,1)
 val knightTerry = Knight(2,1,1) ; val knightRodrick = Knight(7,1,1)
 val rookJohn = Rook(1,1,1) ; val rookLeeroy = Rook(8,1,1)
-val kingGeorge = King(4,5,1)
+val kingGeorge = King(3,5,1)
 val queenMarika = Queen(5,1,1)
 
 
@@ -212,8 +217,7 @@ val wholeBoard = Board(
     )
 )
 //player 1 only board
-val playerOne = Board(
-    1, mutableListOf(
+val playerOne = Board(1, mutableListOf(
         pawnJerry, pawnRick, pawnSeymour, pawnHilary, pawnJohan, pawnBillie, pawnSusan, pawnKelly,
 
         bishopRodger, bishopMiranda,
@@ -227,8 +231,7 @@ val playerOne = Board(
 )
 
 //player 2 only board
-val playerTwo = Board(
-    2, mutableListOf(
+val playerTwo = Board(2, mutableListOf(
         evilPawnJerry, evilPawnRick, evilPawnSeymour,
 
         evilBishopRodger

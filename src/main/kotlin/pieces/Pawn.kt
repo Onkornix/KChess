@@ -12,33 +12,33 @@ class Pawn(startX:Int, startY:Int, override val player: Int) : Piece() {
 
     //scan arbitrary area for pieces that can be captured or will make move illegal
 
-    override fun moves(piece: Piece): MutableList<List<Int>> {
+    override fun moves(): MutableList<List<Int>> {
         val moves: MutableList<List<Int>> = mutableListOf()
-        val pp = piece.position // I hate writing piece.position every time
+        val piecePos = this.position // I hate writing piece.position every time
 
         fun returnList(num: Int): List<Int> {
             return if (getPlayingPlayerBoard().p == 1){
-                listOf(pp[0],pp[1]+num)
+                listOf(piecePos[0],piecePos[1]+num)
             } else {
-                listOf(pp[0],pp[1]-num)
+                listOf(piecePos[0],piecePos[1]-num)
             }
         }
         fun returnListCaptures(): List<MutableList<Int>> {
             return if (getPlayingPlayerBoard().p == 1){
                 listOf(
-                    mutableListOf(pp[0]+1,pp[1]+1),
-                    mutableListOf(pp[0]-1,pp[1]+1)
+                    mutableListOf(piecePos[0]+1,piecePos[1]+1),
+                    mutableListOf(piecePos[0]-1,piecePos[1]+1)
                 )
             } else {
                 listOf(
-                    mutableListOf(pp[0]+1,pp[1]-1),
-                    mutableListOf(pp[0]-1,pp[1]-1)
+                    mutableListOf(piecePos[0]+1,piecePos[1]-1),
+                    mutableListOf(piecePos[0]-1,piecePos[1]-1)
                 )
             }
         }
 
         // I need to figure out how to make this 1 function for both players
-        when (piece.firstMoveUsed) {
+        when (this.firstMoveUsed) {
             false -> {
                 moves.run {
                     if (returnList(1) !in wholeBoard.piecePositions

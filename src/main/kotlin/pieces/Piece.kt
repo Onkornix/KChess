@@ -8,5 +8,8 @@ abstract class Piece {
     open var position: MutableList<Int> = mutableListOf(0,0)
     open var firstMoveUsed: Boolean = false
 
-    abstract fun moves(piece: Piece): MutableList<List<Int>>
+    abstract fun moves(): MutableList<List<Int>>
+    open fun checkCheck(): Boolean {
+        return true
+    }
 }
