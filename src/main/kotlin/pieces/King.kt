@@ -13,11 +13,13 @@ class King(startX:Int, startY:Int, override val player: Int) : Piece() {
     // true is in check, false is not in check
     override fun checkCheck(): Boolean {
 
-        for (enemyPiece in getWaitingPlayerBoard().b) {
-            if (position in enemyPiece.moves()) {
-                return true
-            }
-        }
+        /*
+        cast rays to check for pieces with certain type
+         */
+
+        //
+
+
         return false
     }
 

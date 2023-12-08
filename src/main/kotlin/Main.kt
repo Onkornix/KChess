@@ -9,6 +9,7 @@ fun getPlayingPlayerBoard(): Board {
         playerTwo
     }
 }
+
 fun getWaitingPlayerBoard() : Board {
     return if (moves % 2 == 1){
         playerOne
@@ -162,6 +163,8 @@ fun printBoard(){
 var moves: Int = 0
 fun main() {
 
+    println(knightRodrick.moves())
+
     var game = 0
     printBoard()
     while (game < 2){
@@ -181,7 +184,7 @@ fun main() {
 
 
 //player 1 pieces (good pieces)
-val pawnJerry = Pawn(1,2,1); val pawnRick = Pawn(2,2,1) ; val pawnSeymour = Pawn(3,2,1)
+val pawnJerry = Pawn(2,3,1); val pawnRick = Pawn(2,2,1) ; val pawnSeymour = Pawn(3,2,1)
 val pawnHilary = Pawn(4,2,1) ; val pawnJohan = Pawn(5,5,1) ; val pawnBillie = Pawn(6,2,1)
 val pawnSusan =  Pawn(7,2,1) ; val pawnKelly =  Pawn(8,2,1)
 val bishopRodger = Bishop(5,7,1) ; val bishopMiranda = Bishop(3,1,1)
