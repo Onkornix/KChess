@@ -12,31 +12,33 @@ class Rook(startX:Int, startY:Int, override val player: Int) : Piece() {
 
         for (y in 1..8) {
             when {
-                listOf(position[0],y) == position -> break
-                getWaitingPlayerBoard().piecePositions.contains(listOf()) -> {
+                listOf(position[0],y) == position -> continue
+                getWaitingPlayerBoard().piecePositions.contains(listOf(position[0],y)) -> {
                     moves.add(listOf(position[0],y))
                     break
                 }
                 getPlayingPlayerBoard().piecePositions.contains(listOf(position[0],y)) -> {
                     break
                 }
+                else -> moves.add(listOf(position[0],y))
             }
-            moves.add(listOf(position[0],y))
+
         }
+
         for (x in 1..8) {
             when {
-                listOf(x,position[1]) == position -> break
-                getWaitingPlayerBoard().piecePositions.contains(listOf()) -> {
+                listOf(x,position[1]) == position -> continue
+                getWaitingPlayerBoard().piecePositions.contains(listOf(x,position[1])) -> {
                     moves.add(listOf(x,position[1]))
                     break
                 }
                 getPlayingPlayerBoard().piecePositions.contains(listOf(x,position[1])) -> {
                     break
                 }
+                else -> moves.add(listOf(x,position[1]))
             }
-            moves.add(listOf(x,position[1]))
         }
-        println(moves)
+
         return moves
     }
 }

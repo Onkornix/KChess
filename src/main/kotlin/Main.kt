@@ -162,7 +162,7 @@ fun printBoard(){
 
 var moves: Int = 0
 fun main() {
-
+    println(queenMarika.moves())
     println(knightRodrick.moves())
 
     var game = 0
@@ -191,7 +191,7 @@ val bishopRodger = Bishop(5,7,1) ; val bishopMiranda = Bishop(3,1,1)
 val knightTerry = Knight(2,1,1) ; val knightRodrick = Knight(7,1,1)
 val rookJohn = Rook(1,1,1) ; val rookLeeroy = Rook(8,1,1)
 val kingGeorge = King(3,5,1)
-val queenMarika = Queen(5,1,1)
+val queenMarika = Queen(7,5,1)
 
 
 //player 2 pieces (evil)
