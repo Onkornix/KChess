@@ -16,15 +16,8 @@ class Queen(startX:Int, startY:Int, override val player: Int) : Piece() {
             }
             for(move in rookHere.moves()) {
                 add(move)
+                println(move)
             }
-            add(listOf(position[0]+1,position[1]+1))
-            add(listOf(position[0],position[1]+1))
-            add(listOf(position[0]-1,position[1]+1))
-            add(listOf(position[0]-1,position[1]))
-            add(listOf(position[0]-1,position[1]-1))
-            add(listOf(position[0],position[1]-1))
-            add(listOf(position[0]+1,position[1]-1))
-            add(listOf(position[0]+1,position[1]))
         }
 
         return moves

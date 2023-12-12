@@ -10,6 +10,7 @@ class Rook(startX:Int, startY:Int, override val player: Int) : Piece() {
     override fun moves(): MutableList<List<Int>> {
         val moves: MutableList<List<Int>> = mutableListOf()
 
+        //
         for (y in 1..8) {
             when {
                 listOf(position[0],y) == position -> continue
@@ -38,7 +39,6 @@ class Rook(startX:Int, startY:Int, override val player: Int) : Piece() {
                 else -> moves.add(listOf(x,position[1]))
             }
         }
-
         return moves
     }
 }

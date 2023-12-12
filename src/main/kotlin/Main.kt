@@ -1,6 +1,6 @@
 import pieces.*
 
-//find out whose turn
+
 fun getPlayingPlayerBoard(): Board {
 
     return if (moves % 2 == 0){
@@ -26,12 +26,13 @@ fun checkMove(piece: Piece, whereToMoveInteger: List<Int>, pieceToMove: String):
     val moveMutableList: MutableList<Int> = mutableListOf(whereToMoveInteger[0],whereToMoveInteger[1])
 
     if (piece.type != "king") {
-        for (p in getPlayingPlayerBoard().b) {
-            if (p.type == "king") {
-                if (p.checkCheck()) {
+        for (playingPlayerPiece in getPlayingPlayerBoard().b) {
+            if (playingPlayerPiece.type == "king") {
+                if (playingPlayerPiece.checkCheck()) {
                     println("whoops! you're in check, buckaroo")
                     return false
                 }
+                break
             }
         }
     }
@@ -162,8 +163,6 @@ fun printBoard(){
 
 var moves: Int = 0
 fun main() {
-    println(queenMarika.moves())
-    println(knightRodrick.moves())
 
     var game = 0
     printBoard()
