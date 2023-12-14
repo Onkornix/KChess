@@ -55,7 +55,6 @@ class Bishop(startX:Int, startY:Int, override val player:Int) : Piece() {
                 downInterup = true
             }
         }
-        println("queen: $moves")
         return moves
     }
 

@@ -9,7 +9,7 @@ abstract class Piece {
     open var firstMoveUsed: Boolean = false
 
     abstract fun moves(): MutableList<List<Int>>
-    open fun checkCheck(): Boolean {
+    open fun isInCheck(): Boolean {
         return true
     }
 }

@@ -18,8 +18,17 @@ fun getWaitingPlayerBoard() : Board {
     }
 }
 
-
+fun getKing() : Piece {
+    for (playingPlayerPiece in getPlayingPlayerBoard().b) {
+        if (playingPlayerPiece.type == "king") {
+            return playingPlayerPiece
+        }
+    }
+    //fallback I guess but this will never happen because the king is always on the board
+    return kingGeorge
+}
 fun checkMove(piece: Piece, whereToMoveInteger: List<Int>, pieceToMove: String): Boolean {
+
 
     val piecesCanMove: MutableList<Piece> = mutableListOf()
     // This is embarrassing
@@ -28,7 +37,7 @@ fun checkMove(piece: Piece, whereToMoveInteger: List<Int>, pieceToMove: String):
     if (piece.type != "king") {
         for (playingPlayerPiece in getPlayingPlayerBoard().b) {
             if (playingPlayerPiece.type == "king") {
-                if (playingPlayerPiece.checkCheck()) {
+                if (playingPlayerPiece.isInCheck()) {
                     println("whoops! you're in check, buckaroo")
                     return false
                 }
@@ -39,8 +48,9 @@ fun checkMove(piece: Piece, whereToMoveInteger: List<Int>, pieceToMove: String):
 
     //check if multiple pieces can move to the same place
     for (playerPiece in getPlayingPlayerBoard().b) {
-        if (playerPiece.type != pieceToMove) break
         val pieceMoves = playerPiece.moves()
+
+        if (playerPiece.type != pieceToMove) continue
         if (pieceMoves.contains(whereToMoveInteger)) piecesCanMove.add(playerPiece)
     }
 
@@ -56,7 +66,15 @@ fun checkMove(piece: Piece, whereToMoveInteger: List<Int>, pieceToMove: String):
     }
 
     if (piece.moves().contains(whereToMoveInteger)) {
+        val fallbackPosition = piece.position
         piece.position = moveMutableList
+
+        if (getKing().isInCheck()) {
+            println("Think again. That'll put you in check :(")
+            piece.position = fallbackPosition
+            return false
+        }
+
         return true
     }
 
