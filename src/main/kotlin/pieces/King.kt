@@ -2,6 +2,7 @@ package pieces
 
 
 import getPlayingPlayerBoard
+import getWaitingPlayerBoard
 class King(startX:Int, startY:Int, override val player: Int) : Piece() {
 
     override val type = "king"
@@ -49,7 +50,32 @@ class King(startX:Int, startY:Int, override val player: Int) : Piece() {
         /*
         cast rays to check for pieces with certain type
          */
+        fun getPieceAtPos(pos: List<Int>,targetPiece: String) : Piece {
+            for (piece in getWaitingPlayerBoard().b) {
+                if (piece.position == pos && piece.type == targetPiece) {
+                    return piece
+                }
+            }
+            return this //  this is ok because it will never happen
+        }
 
+        val pp = position
+        for ((yOffset, coordinateX) in (pp[0]..8).withIndex()){
+            if (yOffset == 0) continue
+            when {
+                pp[1]+yOffset > 8 -> break
+                pp[1]-yOffset < 1 -> break
+            }
+            if (listOf(coordinateX,pp[1]+yOffset) in getWaitingPlayerBoard().piecePositions //there is piece
+                && getPieceAtPos(listOf(coordinateX,pp[1]+yOffset), "bishop").type == "bishop"){ //piece is a bishop
+                return true
+            }
+            if (listOf(coordinateX,pp[1]-yOffset) !in getWaitingPlayerBoard().piecePositions
+                && getPieceAtPos(listOf(coordinateX,pp[1]-yOffset), "bishop").type == "bishop") {
+                return true
+            }
+
+        }
 
         return false
     }
