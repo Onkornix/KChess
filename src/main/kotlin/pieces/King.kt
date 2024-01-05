@@ -54,30 +54,53 @@ class King(startX:Int, startY:Int, override val player: Int) : Piece() {
             for (piece in getWaitingPlayerBoard().b) {
                 if (piece.position == pos && piece.type == targetPiece) {
                     return piece
+                } else {
+                    continue
                 }
             }
-            return this //  this is ok because it will never happen
+            return this //  this is ok because it will never happen (I hope)
         }
-
         val pp = position
-        for ((yOffset, coordinateX) in (pp[0]..8).withIndex()){
-            if (yOffset == 0) continue
-            when {
-                pp[1]+yOffset > 8 -> break
-                pp[1]-yOffset < 1 -> break
+        fun bishop(): Boolean {
+            for ((yOffset, coordinateX) in (pp[0]..8).withIndex()){
+                if (yOffset == 0) continue
+                when {
+                    pp[1]+yOffset > 8 -> break
+                    pp[1]-yOffset < 1 -> break
+                }
+                if (listOf(coordinateX,pp[1]+yOffset) in getWaitingPlayerBoard().piecePositions //there is piece
+                    && getPieceAtPos(listOf(coordinateX,pp[1]+yOffset), "bishop").type == "bishop"){ //piece is a bishop
+                    return true
+                }
+                if (listOf(coordinateX,pp[1]-yOffset) !in getWaitingPlayerBoard().piecePositions
+                    && getPieceAtPos(listOf(coordinateX,pp[1]-yOffset), "bishop").type == "bishop") {
+                    return true
+                }
             }
-            if (listOf(coordinateX,pp[1]+yOffset) in getWaitingPlayerBoard().piecePositions //there is piece
-                && getPieceAtPos(listOf(coordinateX,pp[1]+yOffset), "bishop").type == "bishop"){ //piece is a bishop
-                return true
-            }
-            if (listOf(coordinateX,pp[1]-yOffset) !in getWaitingPlayerBoard().piecePositions
-                && getPieceAtPos(listOf(coordinateX,pp[1]-yOffset), "bishop").type == "bishop") {
-                return true
-            }
-
+            return false
+        }
+        fun queen(): Boolean {
+            return false
+        }
+        fun rook(): Boolean {
+            return false
+        }
+        fun knight(): Boolean {
+            return false
+        }
+        fun pawn(): Boolean {
+            return false
         }
 
-        return false
+        return when {
+            queen() -> true
+            bishop() ->  true
+            rook() ->  true
+            knight() ->  true
+            pawn() -> true
+            else -> false
+
+        }
     }
 
 }
