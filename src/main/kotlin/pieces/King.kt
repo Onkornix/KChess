@@ -61,7 +61,21 @@ class King(startX:Int, startY:Int, override val player: Int) : Piece() {
             return this //  this is ok because it will never happen (I hope)
         }
         val pp = position
+
         fun bishop(): Boolean {
+            val bishopHere = Bishop(position[0], position[1], player)
+
+            if (!bishopHere.moves().contains(position)) {
+                return false
+            }
+            for (move in bishopHere.moves()) {
+                if (getPieceAtPos(move,"bishop").type == "bishop") {
+                    return true
+                }
+            }
+
+
+/*
             for ((yOffset, coordinateX) in (pp[0]..8).withIndex()){
                 if (yOffset == 0) continue
                 when {
@@ -77,14 +91,20 @@ class King(startX:Int, startY:Int, override val player: Int) : Piece() {
                     return true
                 }
             }
-            return false
-        }
-        fun queen(): Boolean {
+
+
+         */
             return false
         }
         fun rook(): Boolean {
+
             return false
         }
+        fun queen(): Boolean {
+
+            return false
+        }
+
         fun knight(): Boolean {
             return false
         }

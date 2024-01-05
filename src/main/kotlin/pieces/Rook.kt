@@ -11,10 +11,10 @@ class Rook(startX:Int, startY:Int, override val player: Int) : Piece() {
         val moves: MutableList<List<Int>> = mutableListOf()
 
         fun returnList(xOrY: Int, iter:Int) : List<Int>{
-            when (xOrY) {
-                0 -> return listOf(position[0],iter)
-                1 -> return listOf(iter,position[1])
-                else -> return emptyList()
+            return when (xOrY) {
+                0 -> listOf(position[0],iter)
+                1 -> listOf(iter,position[1])
+                else -> emptyList()
             }
         }
         fun whenStuff(iter: Int) : Int{
