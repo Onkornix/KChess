@@ -1,5 +1,9 @@
 import pieces.*
+import java.lang.Error
 
+fun error(err: String) {
+    println(err)
+}
 
 fun getPlayingPlayerBoard(): Board {
 
@@ -27,12 +31,15 @@ fun getKing() : Piece {
     //fallback I guess but this will never happen because the king is always on the board
     return kingGeorge
 }
-fun checkMove(piece: Piece, whereToMoveInteger: List<Int>, pieceToMove: String): Boolean {
+fun checkIfLegalMove(piece: Piece, whereToMoveInteger: List<Int>, pieceToMove: String): Boolean {
 
 
     val piecesCanMove: MutableList<Piece> = mutableListOf()
     // This is embarrassing
-    val moveMutableList: MutableList<Int> = mutableListOf(whereToMoveInteger[0],whereToMoveInteger[1])
+    val whereToMove: MutableList<Int> = mutableListOf(whereToMoveInteger[0],whereToMoveInteger[1])
+
+
+    var realPiece = piece
 
 
 
@@ -45,22 +52,23 @@ fun checkMove(piece: Piece, whereToMoveInteger: List<Int>, pieceToMove: String):
     }
     // choose which piece moves
     if (piecesCanMove.size > 1) {
-        println("More than 1 ${piece.type} can move there. \n" +
+        println("More than 1 ${realPiece.type} can move there. \n" +
                 "Which one should move?")
         for ((iterator,p) in piecesCanMove.withIndex()) {
             println("[${iterator+1}] : ${p.type} at ${p.position}")
         }
 
-        piecesCanMove[readln().toInt() - 1].position = moveMutableList
+        realPiece = piecesCanMove[readln().toInt() - 1]
         return true
     }
 
     // find king and check if it's in check before checking piece moves
-    if (piece.type != "king") {
+    // unless the piece being moved is the king.
+    if (realPiece.type != "king") {
         for (playingPlayerPiece in getPlayingPlayerBoard().b) {
             if (playingPlayerPiece.type == "king") {
                 if (playingPlayerPiece.isInCheck()) {
-                    println("whoops! you're in check, buckaroo")
+                    error("whoops! you're in check, buckaroo")
                     return false
                 }
                 break
@@ -68,13 +76,13 @@ fun checkMove(piece: Piece, whereToMoveInteger: List<Int>, pieceToMove: String):
         }
     }
 
-    if (piece.moves().contains(whereToMoveInteger)) {
-        val fallbackPosition = piece.position
-        piece.position = moveMutableList
+    if (realPiece.moves().contains(whereToMoveInteger)) {
+        val fallbackPosition = realPiece.position
+        realPiece.position = whereToMove
 
         if (getKing().isInCheck()) {
-            println("Think again. That'll put you in check :(")
-            piece.position = fallbackPosition
+            error("Think again. That'll put you in check :(")
+            realPiece.position = fallbackPosition
             return false
         }
 
@@ -83,19 +91,20 @@ fun checkMove(piece: Piece, whereToMoveInteger: List<Int>, pieceToMove: String):
 
     return false
 }
-fun move(pieceToMove: String, whereToMove: String): Boolean{
+fun beginMove(pieceToMove: String, whereToMove: String): Boolean{
 
+    //check for inappropriate syntax
     when {
         whereToMove.length > 3 || whereToMove.length < 3 -> {
-        println("ERROR: incorrect move syntax (example: a 3, a_3, a-3)")
+        error("incorrect move syntax (example: a 3, a_3, a-3)")
         return false
         }
         whereToMove[0] !in ('a'..'h') -> {
-            println("ERROR: x coord not in scope (a..h)")
+            error("given row out of scope (a..h)")
             return false
         }
         whereToMove[2].toString().toInt() > 8 || whereToMove[2].toString().toInt() < 1 -> {
-            println("ERROR: y coord out of scope. (1..8)")
+            error("given file out of scope (1..8)")
             return false
         }
     }
@@ -107,7 +116,7 @@ fun move(pieceToMove: String, whereToMove: String): Boolean{
     val whereToMoveInteger: List<Int> = listOf(xpos,ypos)
 
     if (!listOf("pawn","bishop","rook","knight","king","queen").contains(pieceToMove.lowercase())) {
-        println("$pieceToMove is not a valid piece. check spelling, remove whitespaces, and try again")
+        error("$pieceToMove is not a valid piece. check spelling, remove whitespaces, and try again")
         return false
     }
 
@@ -115,7 +124,7 @@ fun move(pieceToMove: String, whereToMove: String): Boolean{
 
     for (piece in getPlayingPlayerBoard().b){
         if (piece.type == pieceToMove) {
-            if (checkMove(piece,whereToMoveInteger,pieceToMove)) {
+            if (checkIfLegalMove(piece,whereToMoveInteger,pieceToMove)) {
                 wholeBoard.update()
                 playerTwo.update()
                 playerOne.update()
@@ -125,11 +134,13 @@ fun move(pieceToMove: String, whereToMove: String): Boolean{
             }
         }
     }
-    println("cannot move $pieceToMove to $whereToMove")
+    error("cannot move $pieceToMove to $whereToMove")
     return false
 }
 
 fun printBoard(){
+    print("\n\n\n")
+    println("player ${(moves % 2) +1}'s turn")
     val resetColor = "\u001b[0m"
     val emptyIcon = "*"
     fun icon(piece: Piece, type: String) : String{ //player color
@@ -186,38 +197,45 @@ fun printBoard(){
 var moves: Int = 0
 fun main() {
 
-    var game = 0
+    var game = true
     printBoard()
-    while (game < 2){
+    while (game){
         print("piece: ")
         val pieceToMove = readln()
         print("move to: ")
         val whereToMove = readln()
-        if (!move(pieceToMove, whereToMove)){
-            //println("failed to move piece")
+        if (!beginMove(pieceToMove, whereToMove)){
             continue
         }
+        moves++
 
         printBoard()
-        game++
+
     }
 }
 
 
 //player 1 pieces (good pieces)
-val pawnJerry = Pawn(2,3,1); val pawnRick = Pawn(2,2,1) ; val pawnSeymour = Pawn(3,2,1)
-val pawnHilary = Pawn(4,2,1) ; val pawnJohan = Pawn(5,5,1) ; val pawnBillie = Pawn(6,2,1)
+val pawnJerry = Pawn(1,2,1); val pawnRick = Pawn(2,2,1) ; val pawnSeymour = Pawn(3,2,1)
+val pawnHilary = Pawn(4,2,1) ; val pawnJohan = Pawn(5,2,1) ; val pawnBillie = Pawn(6,2,1)
 val pawnSusan =  Pawn(7,2,1) ; val pawnKelly =  Pawn(8,2,1)
-val bishopRodger = Bishop(5,7,1) ; val bishopMiranda = Bishop(3,1,1)
+val bishopRodger = Bishop(3,1,1) ; val bishopMiranda = Bishop(6,1,1)
 val knightTerry = Knight(2,1,1) ; val knightRodrick = Knight(7,1,1)
 val rookJohn = Rook(1,1,1) ; val rookLeeroy = Rook(8,1,1)
-val kingGeorge = King(3,5,1)
-val queenMarika = Queen(7,5,1)
+val kingGeorge = King(4,1,1)
+val queenMarika = Queen(5,1,1)
 
 
 //player 2 pieces (evil)
-val evilPawnJerry = Pawn(2,7,2) ; val evilPawnRick = Pawn(2, 7, 2) ; val evilPawnSeymour = Pawn(3, 7, 2)
-val evilBishopRodger = Bishop(4,4,2)
+val evilPawnJerry = Pawn(1,7,2) ; val evilPawnRick = Pawn(2, 7, 2) ; val evilPawnSeymour = Pawn(3, 7, 2)
+val evilPawnHilary = Pawn(4,7,2) ; val evilPawnJohan = Pawn(5,7,2) ; val evilPawnBillie = Pawn(6,7,2)
+val evilPawnSusan =  Pawn(7,7,2) ; val evilPawnKelly =  Pawn(8,7,2)
+val evilBishopRodger = Bishop(3,8,2) ; val evilBishopMiranda = Bishop(6,8,2)
+val evilKnightTerry = Knight(2,8,2) ; val evilKnightRodrick = Knight(7,8,2)
+val evilRookJohn = Rook(1,8,2) ; val evilRookLeeroy = Rook(8,8,2)
+val evilKingGeorge = King(4,8,2)
+val evilQueenMarika = Queen(5,8,2)
+
 
 //entire bord
 val wholeBoard = Board(
@@ -234,9 +252,15 @@ val wholeBoard = Board(
 
         // ----class divide---- \\
 
-        evilPawnJerry, evilPawnRick, evilPawnSeymour,
+        evilPawnJerry, evilPawnRick, evilPawnSeymour, evilPawnHilary, evilPawnBillie, evilPawnSusan, evilPawnJohan, evilPawnKelly,
 
-        evilBishopRodger
+        evilBishopRodger, evilBishopMiranda,
+
+        evilKnightRodrick, evilKnightTerry,
+
+        evilRookJohn, evilRookLeeroy,
+
+        evilKingGeorge, evilQueenMarika
 
     )
 )
@@ -256,8 +280,14 @@ val playerOne = Board(1, mutableListOf(
 
 //player 2 only board
 val playerTwo = Board(2, mutableListOf(
-        evilPawnJerry, evilPawnRick, evilPawnSeymour,
+    evilPawnJerry, evilPawnRick, evilPawnSeymour, evilPawnHilary, evilPawnJohan, evilPawnKelly,
 
-        evilBishopRodger
+    evilBishopRodger, evilBishopMiranda,
+
+    evilKnightRodrick, evilKnightTerry,
+
+    evilRookJohn, evilRookLeeroy,
+
+    evilKingGeorge, evilQueenMarika
     )
 )

@@ -47,9 +47,8 @@ class King(startX:Int, startY:Int, override val player: Int) : Piece() {
     }
     // true is in check, false is not in check
     override fun isInCheck(): Boolean {
-        /*
-        cast rays to check for pieces with certain type
-         */
+
+
         fun getPieceAtPos(pos: List<Int>,targetPiece: String) : Piece {
             for (piece in getWaitingPlayerBoard().b) {
                 if (piece.position == pos && piece.type == targetPiece) {
@@ -60,41 +59,23 @@ class King(startX:Int, startY:Int, override val player: Int) : Piece() {
             }
             return this //  this is ok because it will never happen (I hope)
         }
-        val pp = position
 
-        fun bishop(): Boolean {
-            val bishopHere = Bishop(position[0], position[1], player)
 
-            for (move in bishopHere.moves()) {
-                if (getPieceAtPos(move,"bishop").type == "bishop") {
+        fun checkWithPiece(piece: Piece) : Boolean {
+            for (move in piece.moves()) {
+                if (getPieceAtPos(move, piece.type).type == piece.type) {
                     return true
                 }
             }
-
             return false
         }
-        fun rook(): Boolean {
-
-            return false
-        }
-        fun queen(): Boolean {
-
-            return false
-        }
-
-        fun knight(): Boolean {
-            return false
-        }
-        fun pawn(): Boolean {
-            return false
-        }
-
+        val pp = position
         return when {
-            queen() -> true
-            bishop() ->  true
-            rook() ->  true
-            knight() ->  true
-            pawn() -> true
+            checkWithPiece(Queen(pp[0],pp[1],player)) -> true
+            checkWithPiece(Bishop(pp[0],pp[1],player)) ->  true
+            checkWithPiece(Rook(pp[0],pp[1],player)) ->  true
+            checkWithPiece(Knight(pp[0],pp[1],player)) ->  true
+            checkWithPiece(Pawn(pp[0],pp[1],player)) -> true
             else -> false
 
         }
