@@ -34,6 +34,28 @@ fun checkMove(piece: Piece, whereToMoveInteger: List<Int>, pieceToMove: String):
     // This is embarrassing
     val moveMutableList: MutableList<Int> = mutableListOf(whereToMoveInteger[0],whereToMoveInteger[1])
 
+
+
+    //check if multiple pieces can move to the same place
+    for (playerPiece in getPlayingPlayerBoard().b) {
+        val pieceMoves = playerPiece.moves()
+
+        if (playerPiece.type != pieceToMove) continue
+        if (pieceMoves.contains(whereToMoveInteger)) piecesCanMove.add(playerPiece)
+    }
+    // choose which piece moves
+    if (piecesCanMove.size > 1) {
+        println("More than 1 ${piece.type} can move there. \n" +
+                "Which one should move?")
+        for ((iterator,p) in piecesCanMove.withIndex()) {
+            println("[${iterator+1}] : ${p.type} at ${p.position}")
+        }
+
+        piecesCanMove[readln().toInt() - 1].position = moveMutableList
+        return true
+    }
+
+    // find king and check if it's in check before checking piece moves
     if (piece.type != "king") {
         for (playingPlayerPiece in getPlayingPlayerBoard().b) {
             if (playingPlayerPiece.type == "king") {
@@ -44,25 +66,6 @@ fun checkMove(piece: Piece, whereToMoveInteger: List<Int>, pieceToMove: String):
                 break
             }
         }
-    }
-
-    //check if multiple pieces can move to the same place
-    for (playerPiece in getPlayingPlayerBoard().b) {
-        val pieceMoves = playerPiece.moves()
-
-        if (playerPiece.type != pieceToMove) continue
-        if (pieceMoves.contains(whereToMoveInteger)) piecesCanMove.add(playerPiece)
-    }
-
-    if (piecesCanMove.size > 1) {
-        println("More than 1 ${piece.type} can move there. \n" +
-                "Which one should move?")
-        for ((iterator,p) in piecesCanMove.withIndex()) {
-            println("[${iterator+1}] : ${p.type} at ${p.position}")
-        }
-
-        piecesCanMove[readln().toInt() - 1].position = moveMutableList
-        return true
     }
 
     if (piece.moves().contains(whereToMoveInteger)) {
@@ -117,7 +120,8 @@ fun move(pieceToMove: String, whereToMove: String): Boolean{
                 playerTwo.update()
                 playerOne.update()
                 return true
-
+            } else {
+                return false
             }
         }
     }

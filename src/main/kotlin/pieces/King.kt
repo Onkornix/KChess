@@ -65,35 +65,12 @@ class King(startX:Int, startY:Int, override val player: Int) : Piece() {
         fun bishop(): Boolean {
             val bishopHere = Bishop(position[0], position[1], player)
 
-            if (!bishopHere.moves().contains(position)) {
-                return false
-            }
             for (move in bishopHere.moves()) {
                 if (getPieceAtPos(move,"bishop").type == "bishop") {
                     return true
                 }
             }
 
-
-/*
-            for ((yOffset, coordinateX) in (pp[0]..8).withIndex()){
-                if (yOffset == 0) continue
-                when {
-                    pp[1]+yOffset > 8 -> break
-                    pp[1]-yOffset < 1 -> break
-                }
-                if (listOf(coordinateX,pp[1]+yOffset) in getWaitingPlayerBoard().piecePositions //there is piece
-                    && getPieceAtPos(listOf(coordinateX,pp[1]+yOffset), "bishop").type == "bishop"){ //piece is a bishop
-                    return true
-                }
-                if (listOf(coordinateX,pp[1]-yOffset) !in getWaitingPlayerBoard().piecePositions
-                    && getPieceAtPos(listOf(coordinateX,pp[1]-yOffset), "bishop").type == "bishop") {
-                    return true
-                }
-            }
-
-
-         */
             return false
         }
         fun rook(): Boolean {
