@@ -1,5 +1,4 @@
 import pieces.*
-import java.lang.Error
 
 fun error(err: String) {
     println(err)
@@ -39,7 +38,7 @@ fun checkIfLegalMove(piece: Piece, whereToMoveInteger: List<Int>, pieceToMove: S
     val whereToMove: MutableList<Int> = mutableListOf(whereToMoveInteger[0],whereToMoveInteger[1])
 
 
-    var realPiece = piece
+
 
 
 
@@ -53,19 +52,17 @@ fun checkIfLegalMove(piece: Piece, whereToMoveInteger: List<Int>, pieceToMove: S
     }
     // choose which piece moves
     if (piecesCanMove.size > 1) {
-        println("More than 1 ${realPiece.type} can move there. \n" +
+        println("More than 1 ${piece.type} can move there. \n" +
                 "Which one should move?")
         for ((iterator,p) in piecesCanMove.withIndex()) {
             println("[${iterator+1}] : ${p.type} at ${p.position}")
         }
 
-        realPiece = piecesCanMove[readln().toInt() - 1]
-        return true
     }
 
     // find king and check if it's in check before checking piece moves
     // unless the piece being moved is the king.
-    if (realPiece.type != "king") {
+    if (piece.type != "king") {
         for (playingPlayerPiece in getPlayingPlayerBoard().b) {
             if (playingPlayerPiece.type == "king") {
                 if (playingPlayerPiece.isInCheck()) {
@@ -77,13 +74,13 @@ fun checkIfLegalMove(piece: Piece, whereToMoveInteger: List<Int>, pieceToMove: S
         }
     }
 
-    if (realPiece.moves().contains(whereToMoveInteger)) {
-        val fallbackPosition = realPiece.position
-        realPiece.position = whereToMove
+    if (piece.moves().contains(whereToMoveInteger)) {
+        val fallbackPosition = piece.position
+        piece.position = whereToMove
 
         if (getKing().isInCheck()) {
             error("Think again. That'll put you in check :(")
-            realPiece.position = fallbackPosition
+            piece.position = fallbackPosition
             return false
         }
 
@@ -114,6 +111,7 @@ fun beginMove(pieceToMove: String, whereToMove: String): Boolean{
     val ypos: Int = whereToMove[2].toString().toInt()
 
     val whereToMoveInteger: List<Int> = listOf(xpos,ypos)
+    println(whereToMoveInteger)
 
     if (!listOf("pawn","bishop","rook","knight","king","queen").contains(pieceToMove.lowercase())) {
         error("$pieceToMove is not a valid piece. check spelling, remove whitespaces, and try again")
@@ -219,7 +217,7 @@ fun main() {
 val pawnJerry = Pawn(1,2,1); val pawnRick = Pawn(2,2,1) ; val pawnSeymour = Pawn(3,2,1)
 val pawnHilary = Pawn(4,2,1) ; val pawnJohan = Pawn(5,2,1) ; val pawnBillie = Pawn(6,2,1)
 val pawnSusan =  Pawn(7,2,1) ; val pawnKelly =  Pawn(8,2,1)
-val bishopRodger = Bishop(3,1,1) ; val bishopMiranda = Bishop(6,1,1)
+val bishopRodger = Bishop(3,1,1) ; val bishopMiranda = Bishop(6,4,1)
 val knightTerry = Knight(2,1,1) ; val knightRodrick = Knight(7,1,1)
 val rookJohn = Rook(1,1,1) ; val rookLeeroy = Rook(8,1,1)
 val kingGeorge = King(4,1,1)
