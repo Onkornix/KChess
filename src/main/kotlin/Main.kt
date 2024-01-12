@@ -45,9 +45,10 @@ fun checkIfLegalMove(piece: Piece, whereToMoveInteger: List<Int>, pieceToMove: S
 
     //check if multiple pieces can move to the same place
     for (playerPiece in getPlayingPlayerBoard().b) {
+        if (playerPiece.type != pieceToMove) continue
+
         val pieceMoves = playerPiece.moves()
 
-        if (playerPiece.type != pieceToMove) continue
         if (pieceMoves.contains(whereToMoveInteger)) piecesCanMove.add(playerPiece)
     }
     // choose which piece moves
@@ -88,7 +89,6 @@ fun checkIfLegalMove(piece: Piece, whereToMoveInteger: List<Int>, pieceToMove: S
 
         return true
     }
-
     return false
 }
 fun beginMove(pieceToMove: String, whereToMove: String): Boolean{
@@ -130,7 +130,7 @@ fun beginMove(pieceToMove: String, whereToMove: String): Boolean{
                 playerOne.update()
                 return true
             } else {
-                return false
+                continue
             }
         }
     }

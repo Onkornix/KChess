@@ -73,7 +73,7 @@ class Pawn(startX:Int, startY:Int, override val player: Int) : Piece() {
                 }
             }
         }
-
+        println(moves)
         return moves
     }
 
