@@ -30,26 +30,33 @@ fun getKing() : Piece {
     //fallback I guess but this will never happen because the king is always on the board
     return kingGeorge
 }
+
+
 fun checkIfLegalMove(piece: Piece, whereToMoveInteger: List<Int>, pieceToMove: String): Boolean {
 
 
     val piecesCanMove: MutableList<Piece> = mutableListOf()
-    // This is embarrassing
-    val whereToMove: MutableList<Int> = mutableListOf(whereToMoveInteger[0],whereToMoveInteger[1])
 
-
-
-
+    val whereToMove: MutableList<Int> = mutableListOf(whereToMoveInteger[0],whereToMoveInteger[1]) // This is embarrassing
 
 
     //check if multiple pieces can move to the same place
+    val movablePieces: MutableList<Piece> = mutableListOf()
     for (playerPiece in getPlayingPlayerBoard().b) {
         if (playerPiece.type != pieceToMove) continue
+        else {
+
+            movablePieces.add(playerPiece)
+        }
+
+    }
+    for (movablePiece in movablePieces) {
 
         val pieceMoves = playerPiece.moves()
 
         if (pieceMoves.contains(whereToMoveInteger)) piecesCanMove.add(playerPiece)
     }
+
     // choose which piece moves
     if (piecesCanMove.size > 1) {
         println("More than 1 ${piece.type} can move there. \n" +
@@ -90,11 +97,11 @@ fun checkIfLegalMove(piece: Piece, whereToMoveInteger: List<Int>, pieceToMove: S
 }
 fun beginMove(pieceToMove: String, whereToMove: String): Boolean{
 
-    //check for inappropriate syntax
+    // check for proper syntax
     when {
         whereToMove.length > 3 || whereToMove.length < 3 -> {
-        error("incorrect move syntax (example: a 3, a_3, a-3)")
-        return false
+            error("incorrect move syntax (example: a 3, a_3, a-3)")
+            return false
         }
         whereToMove[0] !in ('a'..'h') -> {
             error("given row out of scope (a..h)")
@@ -104,20 +111,18 @@ fun beginMove(pieceToMove: String, whereToMove: String): Boolean{
             error("given file out of scope (1..8)")
             return false
         }
+        !listOf("pawn","bishop","rook","knight","king","queen").contains(pieceToMove.lowercase()) -> {
+            error("$pieceToMove is not a valid piece. check spelling, remove whitespaces, and try again")
+            return false
+        }
     }
+
 
     val letterIntMap = mapOf('a' to 1, 'b' to 2, 'c' to 3, 'd' to 4, 'e' to 5, 'f' to 6, 'g' to 7, 'h' to 8)
     val xpos: Int = letterIntMap[whereToMove[0]]!!
     val ypos: Int = whereToMove[2].toString().toInt()
 
     val whereToMoveInteger: List<Int> = listOf(xpos,ypos)
-    println(whereToMoveInteger)
-
-    if (!listOf("pawn","bishop","rook","knight","king","queen").contains(pieceToMove.lowercase())) {
-        error("$pieceToMove is not a valid piece. check spelling, remove whitespaces, and try again")
-        return false
-    }
-
 
 
     for (piece in getPlayingPlayerBoard().b){
@@ -128,11 +133,12 @@ fun beginMove(pieceToMove: String, whereToMove: String): Boolean{
                 playerOne.update()
                 return true
             } else {
+                error("cannot move $pieceToMove to $whereToMove")
                 continue
             }
         }
     }
-    error("cannot move $pieceToMove to $whereToMove")
+
     return false
 }
 

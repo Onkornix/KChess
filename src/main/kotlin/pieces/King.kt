@@ -81,4 +81,8 @@ class King(startX:Int, startY:Int, override val player: Int) : Piece() {
         }
     }
 
+    fun isInCheckmate(checkStatus: Boolean): Boolean {
+        return checkStatus || this.moves().size == 0
+    }
+
 }
