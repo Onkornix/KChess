@@ -1,4 +1,4 @@
-# KChess
+# KChess (Incomplete - On Hiatus)
 
 Have you ever wanted to play chess?
 
